@@ -1,35 +1,27 @@
-import { QRTypeSelector } from "@/components/qr-type-selector";
-import { GlassChip } from "@/components/ui/glass-chip";
+import { CircularSelectorRow } from "@/components/morrow/circular-selector-row";
+import { GuidanceRowCard } from "@/components/morrow/guidance-row-card";
+import { HeroHeaderBlock } from "@/components/morrow/hero-header-block";
+import { HeroPromoCard } from "@/components/morrow/hero-promo-card";
+import { PastelFeatureTile } from "@/components/morrow/pastel-feature-tile";
+import { SectionCard } from "@/components/morrow/section-card";
+import { TopBar } from "@/components/morrow/top-bar";
 import { GlassContainer } from "@/components/ui/glass-container";
-import { Palette } from "@/constants/theme";
 import { FeaturedTemplatesStrip } from "@/features/home/components/featured-templates-strip";
 import { HomeHeroCard } from "@/features/home/components/home-hero-card";
 import { HomeProBanner } from "@/features/home/components/home-pro-banner";
-import { QuickActionsBar } from "@/features/home/components/quick-actions-bar";
 import { QRType } from "@/types/qr";
-import Ionicons from '@expo/vector-icons/Ionicons';
 import { useRouter } from "expo-router";
-import { useCallback } from "react";
-import { Platform, Pressable, ScrollView, Text, View } from "react-native";
-import Animated, { FadeInUp } from "react-native-reanimated";
+import { useCallback, useState } from "react";
+import { Platform, ScrollView, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-
-const FEATURE_HIGHLIGHTS: {
-  icon: keyof typeof Ionicons.glyphMap;
-  label: string;
-}[] = [
-  { icon: "color-palette-outline", label: "Custom Colors" },
-  { icon: "shapes-outline", label: "Eye Shapes" },
-  { icon: "image-outline", label: "Center Logo" },
-  { icon: "cloud-download-outline", label: "HD Export" },
-  { icon: "flash-outline", label: "Instant Scan" },
-];
 
 export default function HomeScreen() {
   const router = useRouter();
+  const [selectedFormat, setSelectedFormat] = useState<QRType>("url");
 
   const handleSelectType = useCallback(
     (type: QRType) => {
+      setSelectedFormat(type);
       router.navigate({
         pathname: "/studio",
         params: { initialType: type },
@@ -37,6 +29,18 @@ export default function HomeScreen() {
     },
     [router],
   );
+
+  const handleOpenStudio = useCallback(() => {
+    router.navigate("/studio");
+  }, [router]);
+
+  const handleOpenExplore = useCallback(() => {
+    router.navigate("/explore");
+  }, [router]);
+
+  const handleOpenSettings = useCallback(() => {
+    router.navigate("/settings");
+  }, [router]);
 
   return (
     <GlassContainer>
@@ -46,8 +50,8 @@ export default function HomeScreen() {
           contentContainerStyle={{
             alignItems: "center",
             paddingHorizontal: 20,
-            paddingTop: 12,
-            paddingBottom: 120,
+            paddingTop: 8,
+            paddingBottom: 130,
           }}
           showsVerticalScrollIndicator={false}
           scrollEventThrottle={16}
@@ -55,63 +59,97 @@ export default function HomeScreen() {
           overScrollMode="never"
         >
           <View className="w-full max-w-[640px]">
-            {/* HERO LANDING SECTION */}
-            <HomeHeroCard />
-            {/* FEATURE HIGHLIGHTS CHIP STRIP */}
-            <Animated.View
-              entering={FadeInUp.duration(500).delay(250)}
-              className="my-2"
+            {/* TOP BAR */}
+            <TopBar
+              title="QRLab"
+              actionIcon="person-outline"
+              onPressAction={handleOpenSettings}
+              showSearch={true}
+              onPressSearch={handleOpenExplore}
+            />
+
+            {/* HERO HEADER BLOCK */}
+            <HeroHeaderBlock
+              headlineLine1="Make QR codes,"
+              headlineLine2="beautifully."
+              subtitle="Craft scan-stopping, on-brand QR codes with live interactive preview, custom eye shapes, curated editorial palettes, and infinite-resolution vector SVG exports. 100% private & on-device."
+              showBotanical={true}
+            />
+
+            {/* FORMAT CHECK-IN ROW (Mood check-in pattern) */}
+            <SectionCard
+              title="Format check-in"
+              showChevron={true}
+              onPressAction={handleOpenStudio}
+              actionText=""
             >
-              <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                contentContainerStyle={{ gap: 8 }}
-              >
-                {FEATURE_HIGHLIGHTS.map((feature) => (
-                  <GlassChip
-                    key={feature.label}
-                    label={feature.label}
-                    icon={feature.icon}
-                  />
-                ))}
-              </ScrollView>
-            </Animated.View>
-            {/* QUICK LAUNCH HUB */}
-            <QuickActionsBar />
-            {/* CURATED TEMPLATES SHOWCASE */}
-            <FeaturedTemplatesStrip />
-            {/* QR CATEGORIES GRID SECTION */}
-            <View className="w-full mt-6 mb-2">
-              <View className="flex-row items-end justify-between mb-2">
-                <View>
-                  <Text className="text-on-surface text-xl font-extrabold tracking-tight">
-                    Select Data Category
-                  </Text>
-                  <Text className="text-on-surface-variant text-xs mt-0.5">
-                    Choose a format to begin customizing in Studio.
-                  </Text>
-                </View>
-                <Pressable
-                  accessibilityLabel="Open studio"
-                  accessibilityRole="button"
-                  onPress={() => router.navigate("/studio")}
-                  className="flex-row items-center gap-1"
-                >
-                  <Text className="text-accent text-xs font-bold">Studio</Text>
-                  <Ionicons
-                    name="chevron-forward"
-                    size={14}
-                    color={Palette.cyan}
-                  />
-                </Pressable>
-              </View>
-              <QRTypeSelector
-                selectedType="url"
-                onSelectType={handleSelectType}
-                variant="carousel"
+              <CircularSelectorRow
+                selectedId={selectedFormat}
+                onSelect={handleSelectType}
               />
+            </SectionCard>
+
+            {/* HERO PROMO CARD ("A little space for yourself" pattern) */}
+            <HeroPromoCard
+              titleLine1="A little space"
+              titleLine2="for your brand"
+              subtitle="Pause. Create. High-res vector codes crafted effortlessly."
+              onPress={handleOpenStudio}
+            />
+
+            {/* PASTEL FEATURE TILES (2x2 Grid) */}
+            <View className="w-full my-3">
+              <View className="flex-row gap-3 mb-3">
+                <PastelFeatureTile
+                  title="Website Link"
+                  description="Direct visitors to any webpage or link."
+                  variant="lavender"
+                  illustration="leaf"
+                  onPress={() => handleSelectType("url")}
+                />
+                <PastelFeatureTile
+                  title="Guest Wi-Fi"
+                  description="Share credentials with seamless zero-typing."
+                  variant="sage"
+                  illustration="flower"
+                  onPress={() => handleSelectType("wifi")}
+                />
+              </View>
+
+              <View className="flex-row gap-3">
+                <PastelFeatureTile
+                  title="Digital vCard"
+                  description="Instant contact exchange for professionals."
+                  variant="butter"
+                  illustration="branch"
+                  onPress={() => handleSelectType("vcard")}
+                />
+                <PastelFeatureTile
+                  title="Custom Text"
+                  description="Encode instructions, notes, or messages."
+                  variant="peach"
+                  illustration="crescent"
+                  onPress={() => handleSelectType("text")}
+                />
+              </View>
             </View>
-            {/* PRO BANNER SECTION */}
+
+            {/* GUIDANCE ROW CARD ("Not sure where to start?") */}
+            <GuidanceRowCard
+              title="Not sure where to start?"
+              subtitle="Explore pre-designed templates and get personalized recommendations."
+              icon="book-outline"
+              iconBgColor="#D9D4F5"
+              onPress={handleOpenExplore}
+            />
+
+            {/* LIVE QR INTERACTIVE HERO CARD */}
+            <HomeHeroCard />
+
+            {/* CURATED TEMPLATES STRIP */}
+            <FeaturedTemplatesStrip />
+
+            {/* PRO VECTOR BANNER */}
             <HomeProBanner />
           </View>
         </ScrollView>

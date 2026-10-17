@@ -45,7 +45,7 @@ export const TEMPLATES_LIST: QRTemplate[] = [
     icon: 'restaurant-outline',
     gradient: ['#FFF7ED', '#FFEDD5'],
     color: '#F59E0B',
-    sampleValue: 'https://qrstudio.me/menu-demo',
+    sampleValue: 'https://qrlab.me/menu-demo',
   },
   {
     id: '3',
@@ -56,7 +56,7 @@ export const TEMPLATES_LIST: QRTemplate[] = [
     icon: 'code-slash-outline',
     gradient: ['#F5F3FF', '#EDE9FE'],
     color: '#7C3AED',
-    sampleValue: 'https://qrstudio.me/portfolio',
+    sampleValue: 'https://qrlab.me/portfolio',
   },
   {
     id: '4',
@@ -67,7 +67,7 @@ export const TEMPLATES_LIST: QRTemplate[] = [
     icon: 'document-text-outline',
     gradient: ['#F8FAFC', '#E2E8F0'],
     color: '#475569',
-    sampleValue: 'https://qrstudio.me/cv-alex',
+    sampleValue: 'https://qrlab.me/cv-alex',
   },
   {
     id: '5',
@@ -100,7 +100,7 @@ export const TEMPLATES_LIST: QRTemplate[] = [
     icon: 'wallet-outline',
     gradient: ['#F0FDF4', '#BBF7D0'],
     color: '#16A34A',
-    sampleValue: 'https://qrstudio.me/pay-checkout',
+    sampleValue: 'https://qrlab.me/pay-checkout',
   },
   {
     id: '8',
@@ -111,6 +111,6 @@ export const TEMPLATES_LIST: QRTemplate[] = [
     icon: 'share-social-outline',
     gradient: ['#FAF5FF', '#E9D5FF'],
     color: '#9333EA',
-    sampleValue: 'https://qrstudio.me/socials-all',
+    sampleValue: 'https://qrlab.me/socials-all',
   },
 ];

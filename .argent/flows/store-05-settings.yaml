@@ -2,12 +2,11 @@ steps:
   - launch: com.rafiqdev.qrstudio
   - await:
       visible:
-        text: Scan-Stopping
-  - echo: "Profile tab in bottom navigation bar"
+        text: QRLab
   - tap:
       text: Profile
   - await:
       visible:
-        text: Profile & Settings
+        text: Preferences & governance
   - await:
       idle: true

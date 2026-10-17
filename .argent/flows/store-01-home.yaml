@@ -2,6 +2,6 @@ steps:
   - launch: com.rafiqdev.qrstudio
   - await:
       visible:
-        text: Scan-Stopping
+        text: QRLab
   - await:
       idle: true

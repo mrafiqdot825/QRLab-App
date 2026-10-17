@@ -12,7 +12,7 @@ import { Alert, Linking, Platform, Pressable, Text, View } from "react-native";
 export const DeveloperInfoCard: React.FC = memo(() => {
   const { colors } = useTheme();
   const handleOpenEmail = React.useCallback(async (email: string) => {
-    const subject = encodeURIComponent("QR Studio App Support & Inquiry");
+    const subject = encodeURIComponent("QRLab App Support & Inquiry");
     const mailtoUrl = `mailto:${email}?subject=${subject}`;
     const webGmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${email}&su=${subject}`;
 
@@ -65,18 +65,18 @@ export const DeveloperInfoCard: React.FC = memo(() => {
       {/* HEADER WITH LOGO & APP VERSION */}
       <View className="flex-row items-center gap-4">
         <LinearGradient
-          colors={["#3E6FA6", "#1E2A38"]}
+          colors={["#4A0F3A", "#1A1416"]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
-          className="w-14 h-14 rounded-3xl items-center justify-center border border-white/20"
+          className="w-14 h-14 rounded-3xl items-center justify-center border border-white/20 shadow-sm"
         >
           <Ionicons name="qr-code" size={28} color="#FFFFFF" />
         </LinearGradient>
 
         <View className="gap-1 flex-1">
           <View className="flex-row items-center justify-between">
-            <Text className="text-on-surface text-xl font-extrabold tracking-tight">
-              QR Studio
+            <Text className="text-on-surface text-2xl font-serif font-bold tracking-tight">
+              QRLab
             </Text>
             <GlassBadge label={`v${APP_CONFIG.version}`} variant="primary" />
           </View>
@@ -91,7 +91,7 @@ export const DeveloperInfoCard: React.FC = memo(() => {
       {/* DEVELOPER PROFILE INFO */}
       <View
         style={{
-          backgroundColor: colors.glassSurfaceSubtle,
+          backgroundColor: colors.surface,
           borderColor: colors.border,
         }}
         className="p-4 rounded-3xl border gap-3"
@@ -99,10 +99,10 @@ export const DeveloperInfoCard: React.FC = memo(() => {
         <View className="flex-row items-center justify-between">
           <View className="flex-row items-center gap-2.5">
             <View
-              style={{ backgroundColor: withAlpha(colors.accent, 0.1) }}
-              className="w-8 h-8 rounded-full items-center justify-center"
+              style={{ backgroundColor: 'rgba(217, 212, 245, 0.45)' }}
+              className="w-9 h-9 rounded-2xl items-center justify-center"
             >
-              <Ionicons name="code-slash" size={16} color={colors.accent} />
+              <Ionicons name="code-slash" size={17} color="#4A0F3A" />
             </View>
             <View>
               <Text className="text-on-surface text-xs font-bold">
@@ -126,13 +126,13 @@ export const DeveloperInfoCard: React.FC = memo(() => {
             accessibilityRole="button"
             onPress={() => handleOpenEmail(APP_CONFIG.supportEmail)}
             style={{
-              backgroundColor: withAlpha(colors.accent, 0.1),
-              borderColor: withAlpha(colors.accent, 0.2),
+              backgroundColor: 'rgba(74, 15, 58, 0.08)',
+              borderColor: 'rgba(74, 15, 58, 0.18)',
             }}
-            className="flex-1 flex-row items-center justify-center gap-1.5 py-2.5 rounded-2xl border active:scale-95"
+            className="flex-1 flex-row items-center justify-center gap-1.5 py-2.5 rounded-full border active:scale-95"
           >
-            <Ionicons name="mail-outline" size={14} color={colors.accent} />
-            <Text className="text-accent text-xs font-bold">Support Email</Text>
+            <Ionicons name="mail-outline" size={14} color="#4A0F3A" />
+            <Text className="text-plum text-xs font-bold">Support Email</Text>
           </Pressable>
 
           <Pressable
@@ -142,10 +142,10 @@ export const DeveloperInfoCard: React.FC = memo(() => {
               handleOpenLink("https://mrafiq.vercel.app/", "Developer Site")
             }
             style={{
-              backgroundColor: colors.glassSurfaceSubtle,
+              backgroundColor: colors.surface,
               borderColor: colors.border,
             }}
-            className="flex-1 flex-row items-center justify-center gap-1.5 py-2.5 rounded-2xl border active:scale-95"
+            className="flex-1 flex-row items-center justify-center gap-1.5 py-2.5 rounded-full border active:scale-95"
           >
             <Ionicons
               name="globe-outline"

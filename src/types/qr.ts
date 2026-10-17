@@ -33,7 +33,7 @@ export interface PhoneConfig {
 
 export type ModuleShape = 'square' | 'rounded' | 'dots';
 export type EyeStyle = 'square' | 'rounded' | 'circle';
-export type LogoPreset = 'none' | 'qrstudio' | 'star' | 'heart' | 'shield';
+export type LogoPreset = 'none' | 'qrlab' | 'qrstudio' | 'star' | 'heart' | 'shield';
 
 export interface CustomizationOptions {
   fgColor?: string;

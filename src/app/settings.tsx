@@ -1,5 +1,8 @@
 import { GlassCard } from '@/components/ui/glass-card';
 import { GlassContainer } from '@/components/ui/glass-container';
+import { HeroHeaderBlock } from '@/components/morrow/hero-header-block';
+import { TopBar } from '@/components/morrow/top-bar';
+import { Palette } from '@/constants/theme';
 import { DeveloperInfoCard } from '@/features/settings/components/developer-info-card';
 import { PoliciesCard } from '@/features/settings/components/policies-card';
 import { useTheme } from '@/hooks/use-theme';
@@ -38,27 +41,30 @@ export default function SettingsScreen() {
           removeClippedSubviews={Platform.OS !== 'web'}
           overScrollMode="never">
           <View className="w-full max-w-[640px]">
-            {/* Header Section */}
-            <View className="my-3">
-              <Text className="text-on-surface text-3xl font-extrabold tracking-tight">Profile & Settings</Text>
-              <Text className="text-on-surface-variant text-sm mt-1">
-                Developer profile, legal governance, and app preferences.
-              </Text>
-            </View>
+            {/* Top Bar with Wordmark */}
+            <TopBar title="QRLab" />
+
+            {/* Signature Morrow Hero Header Block */}
+            <HeroHeaderBlock
+              eyebrow="Preferences & governance"
+              headlineLine1="Profile &"
+              headlineLine2="settings."
+              subtitle="Developer profile, legal governance, and app preferences."
+            />
 
             {/* DEVELOPER SPOTLIGHT CARD */}
             <DeveloperInfoCard />
 
             {/* PREFERENCES GROUP */}
-            <GlassCard className="p-4 gap-3 my-2">
+            <GlassCard className="p-5 gap-3.5 my-2">
               <Text className="text-on-surface-variant text-[11px] font-extrabold tracking-wider uppercase">
                 HAPTICS & PREFERENCES
               </Text>
 
               <View className="flex-row items-center justify-between py-1">
                 <View className="flex-row items-center gap-3">
-                  <View style={{ backgroundColor: colors.secondaryBackground }} className="w-8 h-8 rounded-xl items-center justify-center">
-                    <Ionicons name="phone-portrait-outline" size={16} color={colors.accent} />
+                  <View style={{ backgroundColor: 'rgba(217, 212, 245, 0.45)' }} className="w-9 h-9 rounded-2xl items-center justify-center">
+                    <Ionicons name="phone-portrait-outline" size={17} color={Palette.plum} />
                   </View>
                   <View>
                     <Text className="text-on-surface font-bold text-sm">Haptic Feedback</Text>
@@ -69,15 +75,15 @@ export default function SettingsScreen() {
                   accessibilityLabel="Toggle haptic feedback"
                   value={hapticsEnabled}
                   onValueChange={toggleHaptics}
-                  trackColor={{ false: colors.border, true: colors.accent }}
+                  trackColor={{ false: 'rgba(74, 15, 58, 0.12)', true: Palette.plum }}
                   thumbColor="#FFFFFF"
                 />
               </View>
 
               <View style={{ borderColor: colors.border }} className="flex-row items-center justify-between py-1 border-t">
                 <View className="flex-row items-center gap-3">
-                  <View style={{ backgroundColor: colors.secondaryBackground }} className="w-8 h-8 rounded-xl items-center justify-center">
-                    <Ionicons name="sparkles-outline" size={16} color={colors.accent} />
+                  <View style={{ backgroundColor: 'rgba(201, 216, 190, 0.45)' }} className="w-9 h-9 rounded-2xl items-center justify-center">
+                    <Ionicons name="sparkles-outline" size={17} color={Palette.plum} />
                   </View>
                   <View>
                     <Text className="text-on-surface font-bold text-sm">Ultra HD Vector Engine</Text>
@@ -88,7 +94,7 @@ export default function SettingsScreen() {
                   accessibilityLabel="Toggle ultra HD vector engine"
                   value={highQualityExports}
                   onValueChange={setHighQualityExports}
-                  trackColor={{ false: colors.border, true: colors.accent }}
+                  trackColor={{ false: 'rgba(74, 15, 58, 0.12)', true: Palette.plum }}
                   thumbColor="#FFFFFF"
                 />
               </View>

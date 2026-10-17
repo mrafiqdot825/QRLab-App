@@ -157,24 +157,25 @@ export function ExportModal({
               interactive
               style={{
                 flex: 1,
-                borderColor: selectedFormat === 'png' ? colors.accent : 'transparent',
-                borderWidth: selectedFormat === 'png' ? 1.5 : 0,
+                borderColor: selectedFormat === 'png' ? '#4A0F3A' : 'rgba(74, 15, 58, 0.08)',
+                borderWidth: selectedFormat === 'png' ? 2 : 1,
+                backgroundColor: selectedFormat === 'png' ? '#FDF6F2' : '#FFFFFF',
               }}
               className="p-3 items-center gap-1.5"
             >
               <Ionicons
                 name="image-outline"
                 size={20}
-                color={selectedFormat === 'png' ? colors.accent : colors.tertiaryText}
+                color={selectedFormat === 'png' ? '#4A0F3A' : Palette.inkMuted}
               />
               <Text
                 className={`text-xs font-bold ${
-                  selectedFormat === 'png' ? 'text-accent' : 'text-on-surface-variant'
+                  selectedFormat === 'png' ? 'text-plum' : 'text-ink-muted'
                 }`}
               >
                 PNG Image
               </Text>
-              <Text className="text-[10px] text-on-surface-variant text-center" numberOfLines={1}>
+              <Text className="text-[10px] text-ink-muted text-center" numberOfLines={1}>
                 HD 2048px
               </Text>
             </GlassCard>
@@ -184,23 +185,25 @@ export function ExportModal({
               interactive
               style={{
                 flex: 1,
-                borderColor: selectedFormat === 'svg' ? Palette.emerald : 'transparent',
-                borderWidth: selectedFormat === 'svg' ? 1.5 : 0,
+                borderColor: selectedFormat === 'svg' ? '#4A0F3A' : 'rgba(74, 15, 58, 0.08)',
+                borderWidth: selectedFormat === 'svg' ? 2 : 1,
+                backgroundColor: selectedFormat === 'svg' ? '#FDF6F2' : '#FFFFFF',
               }}
               className="p-3 items-center gap-1.5"
             >
               <Ionicons
                 name="code-slash-outline"
                 size={20}
-                color={selectedFormat === 'svg' ? Palette.emerald : colors.tertiaryText}
+                color={selectedFormat === 'svg' ? '#4A0F3A' : Palette.inkMuted}
               />
               <Text
-                className="text-xs font-bold"
-                style={{ color: selectedFormat === 'svg' ? Palette.emerald : colors.secondaryText }}
+                className={`text-xs font-bold ${
+                  selectedFormat === 'svg' ? 'text-plum' : 'text-ink-muted'
+                }`}
               >
                 SVG Vector
               </Text>
-              <Text className="text-[10px] text-on-surface-variant text-center" numberOfLines={1}>
+              <Text className="text-[10px] text-ink-muted text-center" numberOfLines={1}>
                 Infinite scale
               </Text>
             </GlassCard>
@@ -210,23 +213,25 @@ export function ExportModal({
               interactive
               style={{
                 flex: 1,
-                borderColor: selectedFormat === 'pdf' ? Palette.amber : 'transparent',
-                borderWidth: selectedFormat === 'pdf' ? 1.5 : 0,
+                borderColor: selectedFormat === 'pdf' ? '#4A0F3A' : 'rgba(74, 15, 58, 0.08)',
+                borderWidth: selectedFormat === 'pdf' ? 2 : 1,
+                backgroundColor: selectedFormat === 'pdf' ? '#FDF6F2' : '#FFFFFF',
               }}
               className="p-3 items-center gap-1.5"
             >
               <Ionicons
                 name="document-text-outline"
                 size={20}
-                color={selectedFormat === 'pdf' ? Palette.amber : colors.tertiaryText}
+                color={selectedFormat === 'pdf' ? '#4A0F3A' : Palette.inkMuted}
               />
               <Text
-                className="text-xs font-bold"
-                style={{ color: selectedFormat === 'pdf' ? Palette.amber : colors.secondaryText }}
+                className={`text-xs font-bold ${
+                  selectedFormat === 'pdf' ? 'text-plum' : 'text-ink-muted'
+                }`}
               >
                 PDF Document
               </Text>
-              <Text className="text-[10px] text-on-surface-variant text-center" numberOfLines={1}>
+              <Text className="text-[10px] text-ink-muted text-center" numberOfLines={1}>
                 Print ready
               </Text>
             </GlassCard>

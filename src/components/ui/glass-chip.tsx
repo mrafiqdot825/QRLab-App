@@ -67,22 +67,30 @@ export const GlassChip = React.memo(function GlassChip({
         onPressOut={handlePressOut}
         style={
           selected
-            ? { backgroundColor: colors.accent, borderColor: colors.accent }
-            : { backgroundColor: colors.surface, borderColor: colors.border }
+            ? {
+                backgroundColor: '#4A0F3A',
+                borderColor: '#4A0F3A',
+                boxShadow: '0px 3px 10px rgba(74, 15, 58, 0.20)',
+              }
+            : {
+                backgroundColor: '#FFFFFF',
+                borderColor: 'rgba(74, 15, 58, 0.08)',
+                boxShadow: '0px 2px 6px rgba(74, 15, 58, 0.04)',
+              }
         }
-        className="px-3.5 py-2.5 rounded-full flex-row items-center justify-center gap-1.5 overflow-hidden relative border"
+        className="px-4 py-2.5 rounded-full flex-row items-center justify-center gap-1.5 overflow-hidden relative border"
       >
         {icon && (
           <Ionicons
             name={icon}
             size={16}
-            color={selected ? "#FFFFFF" : colors.accent}
+            color={selected ? "#FFFFFF" : Palette.ink}
           />
         )}
 
         <Text
-          className={`text-xs font-bold ${
-            selected ? "text-white" : "text-on-surface"
+          className={`text-xs ${
+            selected ? "font-bold text-white" : "font-medium text-ink"
           }`}
           numberOfLines={1}
         >

@@ -47,7 +47,7 @@ export const QRStage3D = React.memo(function QRStage3D({
   value,
   presetId,
   qrRef,
-  title = "QR Studio Code",
+  title = "QRLab Code",
   typeLabel = "URL Link",
   onExport: _onExport,
   fgColor,
@@ -60,7 +60,7 @@ export const QRStage3D = React.memo(function QRStage3D({
   const currentPreset =
     CinematicPresets.find((p) => p.id === presetId) || CinematicPresets[0];
 
-  const effectiveQrColor = fgColor || options?.fgColor || currentPreset.qrColor;
+  const effectiveQrColor = fgColor || options?.fgColor || currentPreset.qrColor || '#4A0F3A';
   const showLogo = options?.logo && options.logo !== 'none';
   const logoRadius =
     options?.eyeStyle === 'circle'
@@ -74,7 +74,7 @@ export const QRStage3D = React.memo(function QRStage3D({
       ? 'rounded-full overflow-hidden aspect-square'
       : options?.eyeStyle === 'square'
       ? 'rounded-none'
-      : 'rounded-4xl overflow-hidden';
+      : 'rounded-[24px] overflow-hidden';
 
   const handleFlip = useCallback(() => {
     if (Platform.OS !== "web") {
@@ -113,14 +113,14 @@ export const QRStage3D = React.memo(function QRStage3D({
     };
   });
 
-  const validValue = value.trim() || "https://qrstudio.me/business-pro";
+  const validValue = value.trim() || "https://qrlab.me/business-pro";
 
   return (
     <View className="items-center justify-center my-4 relative">
-      {/* Soft Ambient Background Glow */}
+      {/* Soft Ambient Background Glow in warm peach */}
       <View
-        className="absolute w-80 h-80 rounded-full -z-10 opacity-15"
-        style={{ backgroundColor: colors.accent }}
+        className="absolute w-80 h-80 rounded-full -z-10"
+        style={{ backgroundColor: '#F7B9A5', opacity: 0.22 }}
       />
 
       <View style={{ width: STAGE_SIZE, height: STAGE_SIZE + 90 }}>
@@ -129,15 +129,16 @@ export const QRStage3D = React.memo(function QRStage3D({
           pointerEvents={isFlipped ? "none" : "auto"}
           style={[
             frontAnimatedStyle,
-            { backgroundColor: colors.surface, borderColor: colors.border, borderWidth: 1 },
+            styles.stageShadow,
+            { backgroundColor: '#FFFFFF', borderColor: 'rgba(74, 15, 58, 0.06)', borderWidth: 1 },
           ]}
-          className="absolute w-full h-full rounded-4xl overflow-hidden p-6 justify-between shadow-sm"
+          className="absolute w-full h-full rounded-[28px] overflow-hidden p-6 justify-between"
         >
           {/* Top Bar */}
           <View className="flex-row items-center justify-between">
             <View className="flex-row items-center gap-2">
-              <Ionicons name="qr-code-outline" size={18} color={colors.accent} />
-              <Text className="text-on-surface text-base font-bold">
+              <Ionicons name="qr-code-outline" size={18} color="#4A0F3A" />
+              <Text className="text-ink text-base font-bold">
                 {title}
               </Text>
             </View>
@@ -145,21 +146,21 @@ export const QRStage3D = React.memo(function QRStage3D({
               accessibilityLabel="Flip card to view code metadata"
               accessibilityRole="button"
               onPress={handleFlip}
-              style={{ backgroundColor: colors.secondaryBackground, borderColor: colors.border, borderWidth: 1 }}
+              style={{ backgroundColor: '#FDF6F2', borderColor: 'rgba(74, 15, 58, 0.08)', borderWidth: 1 }}
               className="flex-row items-center gap-1 px-3 py-1.5 rounded-full overflow-hidden relative active:opacity-70"
             >
               <Ionicons
                 name="sync-outline"
                 size={14}
-                color={colors.secondaryText}
+                color={Palette.inkMuted}
               />
             </Pressable>
           </View>
 
           {/* QR Code Container */}
           <View
-            style={{ borderColor: colors.border, borderWidth: 1 }}
-            className={`self-center bg-white p-5 ${qrContainerRadius} relative shadow-sm`}
+            style={{ borderColor: 'rgba(74, 15, 58, 0.06)', borderWidth: 1, boxShadow: '0px 4px 16px rgba(74, 15, 58, 0.04)' }}
+            className={`self-center bg-white p-5 ${qrContainerRadius} relative`}
           >
             <CustomStyledQRCode
               value={validValue}
@@ -276,4 +277,24 @@ export const QRStage3D = React.memo(function QRStage3D({
     </View>
   );
 });
+
+const styles = StyleSheet.create({
+  stageShadow: {
+    ...Platform.select({
+      ios: {
+        shadowColor: '#4A0F3A',
+        shadowOffset: { width: 0, height: 8 },
+        shadowOpacity: 0.08,
+        shadowRadius: 24,
+      },
+      android: {
+        elevation: 6,
+      },
+      web: {
+        boxShadow: '0px 8px 24px rgba(74, 15, 58, 0.08)',
+      },
+    }),
+  },
+});
+
 

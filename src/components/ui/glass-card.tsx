@@ -62,8 +62,8 @@ const InteractiveGlassCard = React.memo(function InteractiveGlassCard({
         onPress={handlePress}
         onPressIn={handlePressIn}
         onPressOut={handlePressOut}
-        style={containerStyle}
-        className={`rounded-3xl overflow-hidden relative ${className}`}
+        style={[styles.cardShadow, containerStyle]}
+        className={`rounded-[26px] overflow-hidden relative ${className}`}
         {...props}>
         {children}
       </Pressable>
@@ -127,10 +127,30 @@ export const GlassCard = React.memo(function GlassCard({
 
   return (
     <View
-      style={containerStyle}
-      className={`rounded-3xl overflow-hidden relative ${className}`}
+      style={[styles.cardShadow, containerStyle]}
+      className={`rounded-[26px] overflow-hidden relative ${className}`}
       {...props}>
       {children}
     </View>
   );
 });
+
+const styles = StyleSheet.create({
+  cardShadow: {
+    ...Platform.select({
+      ios: {
+        shadowColor: '#4A0F3A',
+        shadowOffset: { width: 0, height: 6 },
+        shadowOpacity: 0.05,
+        shadowRadius: 20,
+      },
+      android: {
+        elevation: 3,
+      },
+      web: {
+        boxShadow: '0px 8px 24px rgba(74, 15, 58, 0.05)',
+      },
+    }),
+  },
+});
+

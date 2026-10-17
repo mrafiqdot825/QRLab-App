@@ -2,12 +2,12 @@ steps:
   - launch: com.rafiqdev.qrstudio
   - await:
       visible:
-        text: Scan-Stopping
+        text: QRLab
   - tap:
-      text: Create QR Now
+      text: Website Link
   - await:
       visible:
-        text: Live QR Preview
+        text: Studio workspace
   - tool: gesture-swipe
     args:
       fromX: 0.5

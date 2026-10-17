@@ -1,27 +1,27 @@
 {
   "expo": {
-    "name": "QR Studio",
-    "slug": "qrify",
-    "version": "2.0.0",
+    "name": "QRLab",
+    "slug": "qrlab",
+    "version": "3.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "qrstudio",
+    "scheme": "qrlab",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "bundleIdentifier": "com.rafiqdev.qrstudio",
+      "bundleIdentifier": "com.rafiqdev.qrlab",
       "icon": "./assets/images/icon.png",
       "jsEngine": "hermes"
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#0B0E17",
+        "backgroundColor": "#372EFF",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
         "backgroundImage": "./assets/images/android-icon-background.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
-      "package": "com.rafiqdev.qrstudio",
-      "versionCode": 2,
+      "package": "com.rafiqdev.qrlab",
+      "versionCode": 3,
       "allowBackup": false,
       "permissions": ["INTERNET", "VIBRATE"],
       "blockedPermissions": [
@@ -45,7 +45,7 @@
       [
         "expo-splash-screen",
         {
-          "backgroundColor": "#0B0E17",
+          "backgroundColor": "#372EFF",
           "image": "./assets/images/splash-icon.png",
           "imageWidth": 120
         }
@@ -60,8 +60,9 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "a87a3b24-e658-4242-bb7f-48573a1f1313"
+        "projectId": "e89ca11f-3417-4cfa-8aa0-cfb262b63014"
       }
-    }
+    },
+    "owner": "rafiqdev"
   }
 }

@@ -57,8 +57,8 @@ export function ScannerModal({ visible, onClose }: ScannerModalProps) {
     const currentType = typeOverride || scanType;
     const scannedCode =
       currentType === 'text'
-        ? 'Important Plain Text Note:\nScanned directly from QR Studio Camera Scanner!\n\nUse this mobile text editor to modify or re-generate your QR code.'
-        : 'https://qrstudio.me/demo-scanned-access';
+        ? 'Important Plain Text Note:\nScanned directly from QRLab Camera Scanner!\n\nUse this mobile text editor to modify or re-generate your QR code.'
+        : 'https://qrlab.me/demo-scanned-access';
 
     if (currentType === 'text') {
       Alert.alert(
@@ -162,19 +162,19 @@ export function ScannerModal({ visible, onClose }: ScannerModalProps) {
 
         {/* SCANNING TARGET FRAME WITH GLASS SCAN LINE */}
         <View className="self-center items-center justify-center relative">
-          <View className="w-64 h-64 rounded-4xl border-2 border-white/40 overflow-hidden relative justify-center items-center bg-white/5">
+          <View className="w-64 h-64 rounded-[28px] border-2 border-white/30 overflow-hidden relative justify-center items-center bg-white/5">
             {/* CORNER BRACKETS */}
-            <View style={{ borderColor: colors.accent }} className="absolute top-3 left-3 w-6 h-6 border-t-4 border-l-4 rounded-tl-xl" />
-            <View style={{ borderColor: colors.accent }} className="absolute top-3 right-3 w-6 h-6 border-t-4 border-r-4 rounded-tr-xl" />
-            <View style={{ borderColor: colors.accent }} className="absolute bottom-3 left-3 w-6 h-6 border-b-4 border-l-4 rounded-bl-xl" />
-            <View style={{ borderColor: colors.accent }} className="absolute bottom-3 right-3 w-6 h-6 border-b-4 border-r-4 rounded-br-xl" />
+            <View style={{ borderColor: '#F7B9A5' }} className="absolute top-3 left-3 w-6 h-6 border-t-4 border-l-4 rounded-tl-xl" />
+            <View style={{ borderColor: '#F7B9A5' }} className="absolute top-3 right-3 w-6 h-6 border-t-4 border-r-4 rounded-tr-xl" />
+            <View style={{ borderColor: '#F7B9A5' }} className="absolute bottom-3 left-3 w-6 h-6 border-b-4 border-l-4 rounded-bl-xl" />
+            <View style={{ borderColor: '#F7B9A5' }} className="absolute bottom-3 right-3 w-6 h-6 border-b-4 border-r-4 rounded-br-xl" />
 
-            {/* ANIMATED GLASS SCAN LINE */}
+            {/* ANIMATED SCAN LINE */}
             <Animated.View
               style={[
                 shadows.glowBlue,
                 animatedScanLine,
-                { position: 'absolute', top: 20, left: 10, right: 10, height: 3, backgroundColor: colors.accent, borderRadius: 2 },
+                { position: 'absolute', top: 20, left: 10, right: 10, height: 3, backgroundColor: '#F7B9A5', borderRadius: 2 },
               ]}
             />
           </View>
@@ -194,10 +194,10 @@ export function ScannerModal({ visible, onClose }: ScannerModalProps) {
                 setScanType('text');
                 handleSimulateScan('text');
               }}
-              style={[styles.scanButtonShadow, { backgroundColor: Palette.cyan }]}
+              style={[styles.scanButtonShadow, { backgroundColor: '#FDF6F2' }]}
               className="flex-row items-center gap-2 px-5 py-3.5 rounded-full active:scale-95">
-              <Ionicons name="document-text" size={18} color="#FFFFFF" />
-              <Text className="text-white font-extrabold text-xs tracking-wider">SCAN PLAIN TEXT</Text>
+              <Ionicons name="document-text-outline" size={18} color="#1A1416" />
+              <Text className="text-ink font-bold text-xs tracking-wider">SCAN PLAIN TEXT</Text>
             </Pressable>
 
             <Pressable
@@ -207,10 +207,10 @@ export function ScannerModal({ visible, onClose }: ScannerModalProps) {
                 setScanType('url');
                 handleSimulateScan('url');
               }}
-              style={[styles.scanButtonShadow, { backgroundColor: colors.accent }]}
+              style={[styles.scanButtonShadow, { backgroundColor: Palette.plum }]}
               className="flex-row items-center gap-2 px-5 py-3.5 rounded-full active:scale-95">
-              <Ionicons name="link" size={18} color="#FFFFFF" />
-              <Text className="text-white font-extrabold text-xs tracking-wider">SCAN URL</Text>
+              <Ionicons name="link-outline" size={18} color="#FFFFFF" />
+              <Text className="text-white font-bold text-xs tracking-wider">SCAN URL</Text>
             </Pressable>
           </View>
         </View>

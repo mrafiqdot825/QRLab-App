@@ -29,17 +29,19 @@ export const PoliciesCard: React.FC = memo(() => {
           accessibilityRole="button"
           onPress={openPrivacy}
           style={{ borderColor: colors.border }}
-          className="flex-row items-center justify-between py-2 border-b active:opacity-70">
+          className="flex-row items-center justify-between py-2.5 border-b active:opacity-70">
           <View className="flex-row items-center gap-3">
-            <View style={{ backgroundColor: withAlpha(colors.accent, 0.10) }} className="w-8 h-8 rounded-xl items-center justify-center">
-              <Ionicons name="shield-checkmark-outline" size={16} color={colors.accent} />
+            <View style={{ backgroundColor: 'rgba(201, 216, 190, 0.5)' }} className="w-9 h-9 rounded-2xl items-center justify-center">
+              <Ionicons name="shield-checkmark-outline" size={17} color={Palette.plum} />
             </View>
             <View>
               <Text className="text-on-surface font-bold text-sm">Privacy Policy</Text>
               <Text className="text-on-surface-variant text-[11px]">Local storage, offline safety & camera privacy</Text>
             </View>
           </View>
-          <Ionicons name="chevron-forward" size={16} color={colors.secondaryText} />
+          <View style={{ backgroundColor: colors.surface, borderColor: colors.border }} className="w-7 h-7 rounded-full items-center justify-center border">
+            <Ionicons name="chevron-forward" size={14} color={Palette.plum} />
+          </View>
         </Pressable>
 
         {/* TERMS OF SERVICE ROW */}
@@ -48,17 +50,19 @@ export const PoliciesCard: React.FC = memo(() => {
           accessibilityRole="button"
           onPress={openTerms}
           style={{ borderColor: colors.border }}
-          className="flex-row items-center justify-between py-2 border-b active:opacity-70">
+          className="flex-row items-center justify-between py-2.5 border-b active:opacity-70">
           <View className="flex-row items-center gap-3">
-            <View style={{ backgroundColor: withAlpha(Palette.emerald, 0.10) }} className="w-8 h-8 rounded-xl items-center justify-center">
-              <Ionicons name="document-text-outline" size={16} color={Palette.emerald} />
+            <View style={{ backgroundColor: 'rgba(251, 233, 168, 0.55)' }} className="w-9 h-9 rounded-2xl items-center justify-center">
+              <Ionicons name="document-text-outline" size={17} color={Palette.plum} />
             </View>
             <View>
               <Text className="text-on-surface font-bold text-sm">Terms of Service</Text>
               <Text className="text-on-surface-variant text-[11px]">Usage rights, vector export & commercial rules</Text>
             </View>
           </View>
-          <Ionicons name="chevron-forward" size={16} color={colors.secondaryText} />
+          <View style={{ backgroundColor: colors.surface, borderColor: colors.border }} className="w-7 h-7 rounded-full items-center justify-center border">
+            <Ionicons name="chevron-forward" size={14} color={Palette.plum} />
+          </View>
         </Pressable>
 
         {/* OPEN SOURCE LICENSES ROW */}
@@ -66,17 +70,19 @@ export const PoliciesCard: React.FC = memo(() => {
           accessibilityLabel="Open Software Licenses"
           accessibilityRole="button"
           onPress={openLicenses}
-          className="flex-row items-center justify-between py-2 active:opacity-70">
+          className="flex-row items-center justify-between py-2.5 active:opacity-70">
           <View className="flex-row items-center gap-3">
-            <View style={{ backgroundColor: withAlpha(colors.accent, 0.10) }} className="w-8 h-8 rounded-xl items-center justify-center">
-              <Ionicons name="code-working-outline" size={16} color={colors.accent} />
+            <View style={{ backgroundColor: 'rgba(217, 212, 245, 0.5)' }} className="w-9 h-9 rounded-2xl items-center justify-center">
+              <Ionicons name="code-working-outline" size={17} color={Palette.plum} />
             </View>
             <View>
               <Text className="text-on-surface font-bold text-sm">Software & Open Source Licenses</Text>
               <Text className="text-on-surface-variant text-[11px]">Third-party libraries & MIT license attributions</Text>
             </View>
           </View>
-          <Ionicons name="chevron-forward" size={16} color={colors.secondaryText} />
+          <View style={{ backgroundColor: colors.surface, borderColor: colors.border }} className="w-7 h-7 rounded-full items-center justify-center border">
+            <Ionicons name="chevron-forward" size={14} color={Palette.plum} />
+          </View>
         </Pressable>
       </GlassCard>
 
@@ -97,7 +103,7 @@ export const PoliciesCard: React.FC = memo(() => {
             <View className="gap-3 py-2">
               <Text className="text-on-surface text-sm font-bold">1. Zero Cloud Data Collection</Text>
               <Text className="text-on-surface-variant text-xs leading-5">
-                QR Studio operates 100% locally on your device. Your generated QR codes, payloads, WiFi keys, and contact cards are stored exclusively on your device using encrypted local storage. We do not track, collect, or transmit your data to remote servers.
+                QRLab operates 100% locally on your device. Your generated QR codes, payloads, WiFi keys, and contact cards are stored exclusively on your device using encrypted local storage. We do not track, collect, or transmit your data to remote servers.
               </Text>
 
               <Text className="text-on-surface text-sm font-bold mt-2">2. Camera & Flash Permissions</Text>
@@ -107,7 +113,7 @@ export const PoliciesCard: React.FC = memo(() => {
 
               <Text className="text-on-surface text-sm font-bold mt-2">3. Analytics & Telemetry</Text>
               <Text className="text-on-surface-variant text-xs leading-5">
-                QR Studio does not embed third-party tracking SDKs, advertising IDs, or behavioral analytics software.
+                QRLab does not embed third-party tracking SDKs, advertising IDs, or behavioral analytics software.
               </Text>
             </View>
           )}
@@ -116,12 +122,12 @@ export const PoliciesCard: React.FC = memo(() => {
             <View className="gap-3 py-2">
               <Text className="text-on-surface text-sm font-bold">1. Universal License</Text>
               <Text className="text-on-surface-variant text-xs leading-5">
-                All QR codes generated within QR Studio (including SVG vector exports, PNG images, and PDF print sheets) belong entirely to you. You are free to use them for personal, educational, or commercial purposes.
+                All QR codes generated within QRLab (including SVG vector exports, PNG images, and PDF print sheets) belong entirely to you. You are free to use them for personal, educational, or commercial purposes.
               </Text>
 
               <Text className="text-on-surface text-sm font-bold mt-2">2. Disclaimer of Liability</Text>
               <Text className="text-on-surface-variant text-xs leading-5">
-                QR Studio generates QR matrix structures based on your input strings. Please verify payload details (such as Wi-Fi passwords and bank links) before printing high-volume materials.
+                QRLab generates QR matrix structures based on your input strings. Please verify payload details (such as Wi-Fi passwords and bank links) before printing high-volume materials.
               </Text>
             </View>
           )}
@@ -130,7 +136,7 @@ export const PoliciesCard: React.FC = memo(() => {
             <View className="gap-3 py-2">
               <Text className="text-on-surface text-sm font-bold">Open Source Attributions</Text>
               <Text className="text-on-surface-variant text-xs leading-5">
-                QR Studio is built using open-source libraries:
+                QRLab is built using open-source libraries:
               </Text>
               <View style={{ backgroundColor: colors.glassSurfaceSubtle, borderColor: colors.border }} className="p-3 rounded-2xl gap-1 border">
                 <Text className="text-xs font-bold text-on-surface">• Expo SDK 57 (MIT License)</Text>

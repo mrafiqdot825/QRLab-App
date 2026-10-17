@@ -1,9 +1,11 @@
-import Ionicons from '@expo/vector-icons/Ionicons';
-import * as Haptics from 'expo-haptics';
-import React from 'react';
-import { Platform, Pressable, Text, View } from 'react-native';
+import Ionicons from "@expo/vector-icons/Ionicons";
+import * as Haptics from "expo-haptics";
+import React from "react";
+import { Platform, Pressable, StyleSheet, Text, View } from "react-native";
 
-import { useTheme } from '@/hooks/use-theme';
+import { Palette } from "@/constants/theme";
+import { Typography } from "@/constants/theme/typography";
+import { useTheme } from "@/hooks/use-theme";
 
 interface GlassHeaderProps {
   title?: string;
@@ -15,67 +17,98 @@ interface GlassHeaderProps {
 }
 
 export const GlassHeader = React.memo(function GlassHeader({
-  title = 'QR Studio',
+  title = "QRLab",
   showBack = false,
   onBack,
   onOpenScanner,
   onOpenSettings,
-  className = '',
+  className = "",
 }: GlassHeaderProps) {
-  const { colors, shadows } = useTheme();
+  const { colors } = useTheme();
 
   const triggerHaptic = () => {
-    if (Platform.OS !== 'web') {
+    if (Platform.OS !== "web") {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
     }
   };
 
   return (
     <View
-      style={[shadows.subtle, { backgroundColor: colors.surface, borderColor: colors.border }]}
-      className={`w-full z-50 border-b relative overflow-hidden ${className}`}>
-      <View className="flex-row items-center justify-between px-5 py-3.5 w-full">
+      style={[styles.headerContainer, { backgroundColor: colors.background }]}
+      className={`w-full z-50 relative ${className}`}
+    >
+      <View className="flex-row items-center justify-between px-5 py-3 w-full">
         <View className="flex-row items-center gap-3">
           {showBack ? (
             <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Go back"
               onPress={() => {
                 triggerHaptic();
                 if (onBack) onBack();
               }}
-              style={{ backgroundColor: colors.secondaryBackground, borderColor: colors.border }}
-              className="w-9 h-9 rounded-full items-center justify-center border active:scale-95">
-              <Ionicons name="arrow-back" size={20} color={colors.primaryText} />
+              style={styles.circleButton}
+              className="w-10 h-10 rounded-full items-center justify-center active:scale-95"
+            >
+              <Ionicons name="arrow-back" size={19} color={Palette.ink} />
             </Pressable>
           ) : null}
-          <Text className="text-on-surface text-2xl font-extrabold tracking-tighter">{title}</Text>
+          <Text
+            style={[styles.wordmark, { fontFamily: Typography.serifFamily }]}
+            className="text-ink text-[26px] font-bold tracking-tight"
+          >
+            {title}
+          </Text>
         </View>
 
-        <View className="flex-row items-center gap-2.5">
+        <View className="flex-row items-center gap-2">
           {onOpenScanner && (
             <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Open Scanner"
               onPress={() => {
                 triggerHaptic();
                 onOpenScanner();
               }}
-              style={{ backgroundColor: colors.secondaryBackground, borderColor: colors.border }}
-              className="w-9 h-9 rounded-full items-center justify-center border active:scale-95">
-              <Ionicons name="scan-outline" size={18} color={colors.accent} />
+              style={styles.circleButton}
+              className="w-10 h-10 rounded-full items-center justify-center active:scale-95"
+            >
+              <Ionicons name="scan-outline" size={18} color={Palette.ink} />
             </Pressable>
           )}
 
           {onOpenSettings && (
             <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Open Profile and Settings"
               onPress={() => {
                 triggerHaptic();
                 onOpenSettings();
               }}
-              style={{ backgroundColor: colors.secondaryBackground, borderColor: colors.border }}
-              className="w-9 h-9 rounded-full items-center justify-center border active:scale-95">
-              <Ionicons name="settings-outline" size={18} color={colors.secondaryText} />
+              style={styles.circleButton}
+              className="w-10 h-10 rounded-full items-center justify-center active:scale-95"
+            >
+              <Ionicons name="person-outline" size={18} color={Palette.ink} />
             </Pressable>
           )}
         </View>
       </View>
     </View>
   );
+});
+
+const styles = StyleSheet.create({
+  headerContainer: {
+    borderBottomWidth: 1,
+    borderBottomColor: "rgba(74, 15, 58, 0.05)",
+  },
+  wordmark: {
+    letterSpacing: -0.5,
+  },
+  circleButton: {
+    backgroundColor: "#FFFFFF",
+    borderWidth: 1,
+    borderColor: "rgba(74, 15, 58, 0.08)",
+    boxShadow: "0px 2px 8px rgba(74, 15, 58, 0.05)",
+  },
 });

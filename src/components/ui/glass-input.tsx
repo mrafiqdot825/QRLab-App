@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 
-import { SpringConfigs } from '@/constants/theme';
+import { Palette, SpringConfigs } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 
 interface GlassInputProps extends Omit<TextInputProps, 'style'> {
@@ -39,8 +39,9 @@ export function GlassInput({
 
   const animatedStyle = useAnimatedStyle(() => {
     return {
-      borderColor: focusProgress.value === 1 ? colors.accent : colors.border,
-      borderWidth: focusProgress.value === 1 ? 1.5 : 1,
+      borderColor: focusProgress.value === 1 ? 'rgba(74, 15, 58, 0.35)' : 'rgba(74, 15, 58, 0.08)',
+      borderWidth: 1.5,
+      boxShadow: focusProgress.value === 1 ? '0px 0px 0px 3px rgba(74, 15, 58, 0.12)' : '0px 4px 16px rgba(74, 15, 58, 0.04)',
     };
   });
 
@@ -60,19 +61,19 @@ export function GlassInput({
   return (
     <View className={`w-full gap-1.5 ${className}`}>
       {label ? (
-        <Text className="text-on-surface-variant text-xs font-semibold px-1 tracking-wider uppercase">
+        <Text className="text-ink-muted text-xs font-semibold px-1 tracking-wider uppercase">
           {label}
         </Text>
       ) : null}
 
       <Animated.View
-        style={[shadows.subtle, { backgroundColor: colors.surface }, animatedStyle, style]}
-        className="flex-row items-center px-4 py-3 rounded-2xl overflow-hidden relative gap-2.5">
+        style={[{ backgroundColor: '#FFFFFF' }, animatedStyle, style]}
+        className="flex-row items-center px-4 py-3 rounded-[18px] overflow-hidden relative gap-2.5">
         {icon && (
           <Ionicons
             name={icon}
             size={18}
-            color={isFocused ? colors.accent : colors.secondaryText}
+            color={isFocused ? '#4A0F3A' : Palette.inkMuted}
           />
         )}
 
@@ -80,11 +81,11 @@ export function GlassInput({
           value={value}
           onChangeText={onChangeText}
           placeholder={placeholder}
-          placeholderTextColor={colors.tertiaryText}
+          placeholderTextColor={Palette.inkMuted}
           onFocus={handleFocus}
           onBlur={handleBlur}
-          className="flex-1 text-on-surface text-base py-0"
-          style={{ color: colors.primaryText }}
+          className="flex-1 text-ink text-base py-0"
+          style={{ color: '#1A1416' }}
           {...props}
         />
 

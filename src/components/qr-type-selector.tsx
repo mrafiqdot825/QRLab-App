@@ -76,33 +76,33 @@ const QRTypeCardItem = React.memo(
         style={[
           extraStyle,
           {
-            backgroundColor: isSelected ? colors.surface : colors.glassSurfaceSubtle,
-            borderColor: isSelected ? colors.accent : colors.border,
+            backgroundColor: isSelected ? '#FFFFFF' : '#FDF6F2',
+            borderColor: isSelected ? '#4A0F3A' : 'rgba(74, 15, 58, 0.08)',
             borderWidth: isSelected ? 2 : 1,
           },
         ]}
-        className="p-4 rounded-3xl">
+        className="p-4 rounded-[24px]">
         <View className="gap-2">
           <View className="flex-row items-center justify-between">
             <View
               style={{
-                backgroundColor: isSelected ? colors.accent : withAlpha(colors.accent, 0.10),
+                backgroundColor: isSelected ? '#4A0F3A' : '#FBEDE6',
               }}
-              className="w-10 h-10 rounded-2xl items-center justify-center">
+              className="w-10 h-10 rounded-[14px] items-center justify-center">
               <Ionicons
                 name={typeObj.icon}
                 size={20}
-                color={isSelected ? '#FFFFFF' : colors.accent}
+                color={isSelected ? '#FFFFFF' : '#4A0F3A'}
               />
             </View>
 
             {isSelected && (
-              <View style={{ backgroundColor: colors.accent }} className="w-2.5 h-2.5 rounded-full" />
+              <View style={{ backgroundColor: '#4A0F3A' }} className="w-2.5 h-2.5 rounded-full" />
             )}
           </View>
 
-          <Text className="text-on-surface font-extrabold text-sm mt-1">{typeObj.label}</Text>
-          <Text className="text-on-surface-variant text-xs leading-4" numberOfLines={2}>
+          <Text className="text-ink font-bold text-sm mt-1">{typeObj.label}</Text>
+          <Text className="text-ink-muted text-xs leading-4" numberOfLines={2}>
             {typeObj.desc}
           </Text>
         </View>

@@ -24,25 +24,21 @@ export const GlassBadge = React.memo(function GlassBadge({
   const isSuccess = variant === 'success';
   const isWarning = variant === 'warning';
 
-  const badgeColor = isPrimary
-    ? colors.accent
+  const badgeConfig = isPrimary
+    ? { text: '#4A0F3A', bg: 'rgba(74, 15, 58, 0.08)', border: 'rgba(74, 15, 58, 0.18)' }
     : isSuccess
-    ? Palette.emerald
+    ? { text: '#1B3B2B', bg: '#E4ECE0', border: 'rgba(143, 166, 127, 0.35)' }
     : isWarning
-    ? Palette.amber
-    : colors.secondaryText;
-
-  const isTinted = isPrimary || isSuccess || isWarning;
-  const overlayColor = isTinted ? withAlpha(badgeColor, 0.12) : colors.glassSurfaceSubtle;
-  const borderColor = isTinted ? withAlpha(badgeColor, 0.25) : colors.border;
+    ? { text: '#5C3805', bg: '#FDF4D4', border: 'rgba(251, 233, 168, 0.6)' }
+    : { text: '#6B6468', bg: '#FDF6F2', border: 'rgba(74, 15, 58, 0.08)' };
 
   return (
     <View
-      style={{ backgroundColor: overlayColor, borderColor }}
+      style={{ backgroundColor: badgeConfig.bg, borderColor: badgeConfig.border }}
       className={`self-start flex-row items-center gap-1.5 px-3 py-1 rounded-full border overflow-hidden relative ${className}`}>
-      {icon && <Ionicons name={icon} size={12} color={badgeColor} />}
+      {icon && <Ionicons name={icon} size={12} color={badgeConfig.text} />}
 
-      <Text className="font-extrabold text-[11px] tracking-wider uppercase" style={{ color: badgeColor }}>
+      <Text className="font-bold text-[10px] tracking-wider uppercase" style={{ color: badgeConfig.text }}>
         {label}
       </Text>
     </View>

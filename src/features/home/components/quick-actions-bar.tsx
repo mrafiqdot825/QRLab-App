@@ -91,7 +91,7 @@ export const QuickActionsBar: React.FC = React.memo(() => {
     () => [
       {
         id: "studio",
-        title: "QR Studio",
+        title: "QRLab",
         subtitle: "Custom colors & eyes",
         icon: "create-outline",
         color: colors.accent,

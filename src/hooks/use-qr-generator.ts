@@ -19,7 +19,7 @@ export const useQRGenerator = (props?: UseQRGeneratorProps) => {
   const [text, setText] = useState(
     props?.initialType === 'text' && props?.initialValue
       ? props.initialValue
-      : 'Hello from QR Studio! This is Muhammad Rafiq'
+      : 'Hello from QRLab! This is Muhammad Rafiq'
   );
 
   // Sync state when navigation props change (React-recommended pattern for props-driven state)
@@ -71,7 +71,7 @@ export const useQRGenerator = (props?: UseQRGeneratorProps) => {
 
   // Email
   const [emailTo, setEmailTo] = useState('mrafiqdot825@gmail.com');
-  const [emailSubject, setEmailSubject] = useState('Inquiry via QR Studio');
+  const [emailSubject, setEmailSubject] = useState('Inquiry via QRLab');
 
   // Phone
   const [phoneNum, setPhoneNum] = useState('+923129185825');

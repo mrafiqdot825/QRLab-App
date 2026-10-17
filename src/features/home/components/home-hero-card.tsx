@@ -1,16 +1,15 @@
-import { GlassBadge } from "@/components/ui/glass-badge";
+import { CustomStyledQRCode } from "@/components/ui/custom-styled-qr-code";
 import { GlassButton } from "@/components/ui/glass-button";
 import { GlassCard } from "@/components/ui/glass-card";
 import { GlassShimmer } from "@/components/ui/glass-shimmer";
 import { CinematicPresets, PresetId } from "@/constants/theme";
+import { Typography } from "@/constants/theme/typography";
 import { useTheme } from "@/hooks/use-theme";
-import { withAlpha } from "@/utils/color";
-import Ionicons from '@expo/vector-icons/Ionicons';
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useIsFocused, useRouter } from "expo-router";
 import React, { useEffect, useMemo, useState } from "react";
 import { Dimensions, Pressable, StyleSheet, Text, View } from "react-native";
-import { CustomStyledQRCode } from "@/components/ui/custom-styled-qr-code";
 import Animated, {
   cancelAnimation,
   Easing,
@@ -32,11 +31,12 @@ const HERO_STATS = [
 ];
 
 const PRESET_QUICK_CHOICES: PresetId[] = [
+  "plum-editorial",
   "ocean-blue",
   "aurora",
   "luxury-gold",
-  "lavender",
   "sunset",
+  "lavender",
 ];
 
 const PresetSwatchItem = React.memo(
@@ -53,7 +53,7 @@ const PresetSwatchItem = React.memo(
   }) => {
     const preset = useMemo(
       () => CinematicPresets.find((p) => p.id === presetId),
-      [presetId]
+      [presetId],
     );
     if (!preset) return null;
 
@@ -69,17 +69,19 @@ const PresetSwatchItem = React.memo(
         <View
           style={{
             backgroundColor: preset.accentColor,
-            borderColor: isSelected ? colors.primaryText : "transparent",
+            borderColor: isSelected ? "#4A0F3A" : "transparent",
           }}
           className={`w-7 h-7 rounded-full border-2 items-center justify-center ${
-            isSelected ? "opacity-100" : "opacity-70"
+            isSelected ? "opacity-100 scale-110" : "opacity-70"
           }`}
         >
-          {isSelected && <Ionicons name="checkmark" size={14} color="#FFFFFF" />}
+          {isSelected && (
+            <Ionicons name="checkmark" size={13} color="#FFFFFF" />
+          )}
         </View>
       </Pressable>
     );
-  }
+  },
 );
 PresetSwatchItem.displayName = "PresetSwatchItem";
 
@@ -87,27 +89,27 @@ export const HomeHeroCard: React.FC = React.memo(() => {
   const router = useRouter();
   const { colors } = useTheme();
   const [selectedPresetId, setSelectedPresetId] =
-    useState<PresetId>("ocean-blue");
+    useState<PresetId>("plum-editorial");
 
   const handleNavigateStudio = React.useCallback(
     () => router.navigate("/studio"),
-    [router]
+    [router],
   );
 
   const handleNavigateExplore = React.useCallback(
     () => router.navigate("/explore"),
-    [router]
+    [router],
   );
 
   const handleSelectPreset = React.useCallback(
     (id: PresetId) => setSelectedPresetId(id),
-    []
+    [],
   );
 
   const activePreset = useMemo(() => {
     return (
       CinematicPresets.find((p) => p.id === selectedPresetId) ??
-      CinematicPresets[1]
+      CinematicPresets[0]
     );
   }, [selectedPresetId]);
 
@@ -142,7 +144,7 @@ export const HomeHeroCard: React.FC = React.memo(() => {
   const qrCodeElement = useMemo(
     () => (
       <CustomStyledQRCode
-        value="https://qrstudio.me/pro-studio"
+        value="https://qrlab.me/pro-studio"
         size={Math.min(width * 0.48, 190)}
         color={activePreset.qrColor}
         backgroundColor="#FFFFFF"
@@ -150,28 +152,40 @@ export const HomeHeroCard: React.FC = React.memo(() => {
         eyeStyle="rounded"
       />
     ),
-    [activePreset.qrColor]
+    [activePreset.qrColor],
   );
 
   return (
     <View className="w-full my-2 gap-6">
-      {/* Top Headline & Badge Section */}
+      {/* Top Headline & Eyebrow Section */}
       <Animated.View
         entering={FadeInDown.duration(500).springify()}
-        className="gap-4"
+        className="gap-3"
       >
-        <GlassBadge
-          label="Next-Gen QR Studio"
-          variant="primary"
-          className="self-start"
-        />
-
-        <Text className="text-on-surface text-[38px] font-extrabold leading-[44px] tracking-tight">
-          Scan-Stopping{"\n"}
-          QR Codes Design.
+        <Text className="text-ink-muted text-sm font-normal tracking-tight">
+          Create something,
         </Text>
 
-        <Text className="text-on-surface-variant text-base leading-6 max-w-[440px]">
+        <View>
+          <Text
+            style={{ fontFamily: Typography.serifFamily, letterSpacing: -0.6 }}
+            className="text-ink text-[38px] font-bold leading-[44px]"
+          >
+            Make QR codes,
+          </Text>
+          <Text
+            style={{
+              fontFamily: Typography.serifFamily,
+              fontStyle: "italic",
+              letterSpacing: -0.6,
+            }}
+            className="text-plum text-[38px] font-normal italic leading-[44px]"
+          >
+            beautifully.
+          </Text>
+        </View>
+
+        <Text className="text-ink-muted text-sm leading-6 max-w-[440px]">
           Craft high-converting, on-brand QR codes with live interactive
           preview, custom shapes, embedded logos, and instant vector export.
         </Text>
@@ -193,20 +207,23 @@ export const HomeHeroCard: React.FC = React.memo(() => {
           />
         </View>
         {/* Stats Strip */}
-        <View style={{ borderColor: colors.border }} className="flex-row items-center mt-2 pt-2 border-t">
+        <View
+          style={{ borderColor: "rgba(74, 15, 58, 0.08)" }}
+          className="flex-row items-center mt-2 pt-2 border-t"
+        >
           {HERO_STATS.map((stat, index) => (
             <View key={stat.label} className="flex-row items-center">
               {index > 0 && (
                 <View
-                  style={{ backgroundColor: colors.border }}
+                  style={{ backgroundColor: "rgba(74, 15, 58, 0.08)" }}
                   className="w-px h-7 mx-3"
                 />
               )}
               <View>
-                <Text className="text-on-surface text-base font-extrabold">
+                <Text className="text-ink text-base font-bold">
                   {stat.value}
                 </Text>
-                <Text className="text-on-surface-variant text-[11px] font-medium">
+                <Text className="text-ink-muted text-[11px] font-medium">
                   {stat.label}
                 </Text>
               </View>
@@ -226,7 +243,7 @@ export const HomeHeroCard: React.FC = React.memo(() => {
             pointerEvents="none"
           >
             <LinearGradient
-              colors={[withAlpha(colors.accent, 0.12), "transparent"]}
+              colors={["rgba(247, 185, 165, 0.35)", "transparent"]}
               style={styles.heroGlowFill}
               start={{ x: 0.5, y: 0.5 }}
               end={{ x: 1, y: 1 }}
@@ -237,21 +254,27 @@ export const HomeHeroCard: React.FC = React.memo(() => {
             <GlassShimmer />
             {/* QR Code Container with Active Preset Colors */}
             <View
-              style={{ backgroundColor: activePreset.qrBg, borderColor: colors.border }}
-              className="p-5 rounded-4xl mb-4 border items-center justify-center shadow-sm"
+              style={{
+                backgroundColor: activePreset.qrBg,
+                borderColor: "rgba(74, 15, 58, 0.08)",
+              }}
+              className="p-5 rounded-[24px] mb-4 border items-center justify-center shadow-sm"
             >
               {qrCodeElement}
             </View>
 
-            <Text className="text-on-surface text-base font-extrabold text-center">
+            <Text className="text-ink text-base font-bold text-center">
               {activePreset.name} Style
             </Text>
-            <Text className="text-on-surface-variant text-xs mt-0.5 text-center">
+            <Text className="text-ink-muted text-xs mt-0.5 text-center">
               Tap a preset below to change look in real-time
             </Text>
 
             {/* Interactive Theme Swatch Bar */}
-            <View style={{ borderColor: colors.border }} className="flex-row items-center gap-2 mt-4 pt-3 border-t w-full justify-center">
+            <View
+              style={{ borderColor: "rgba(74, 15, 58, 0.06)" }}
+              className="flex-row items-center gap-2 mt-4 pt-3 border-t w-full justify-center"
+            >
               {PRESET_QUICK_CHOICES.map((id) => (
                 <PresetSwatchItem
                   key={id}

@@ -93,8 +93,9 @@ const styles = StyleSheet.create({
   },
   image: {
     position: 'absolute',
-    width: 76,
-    height: 71,
+    width: 80,
+    height: 80,
+    borderRadius: 20,
   },
   background: {
     width: 128,

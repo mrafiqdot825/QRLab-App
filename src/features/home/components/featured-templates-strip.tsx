@@ -54,11 +54,11 @@ const FeaturedTemplateItem = React.memo(
             />
           </View>
 
-          <Text className="text-on-surface font-extrabold text-base">
+          <Text className="text-ink font-bold text-base">
             {template.title}
           </Text>
           <Text
-            className="text-on-surface-variant text-xs mt-1 leading-4"
+            className="text-ink-muted text-xs mt-1 leading-4"
             numberOfLines={2}
           >
             {template.desc}
@@ -66,18 +66,18 @@ const FeaturedTemplateItem = React.memo(
 
           <View
             style={{
-              backgroundColor: withAlpha(template.color, 0.14),
-              borderColor: withAlpha(template.color, 0.3),
+              backgroundColor: '#FDF6F2',
+              borderColor: 'rgba(74, 15, 58, 0.08)',
             }}
             className="flex-row items-center justify-center gap-1.5 mt-4 py-2.5 rounded-full border overflow-hidden relative"
           >
-            <Text className="text-on-surface text-xs font-extrabold">
+            <Text className="text-ink text-xs font-bold">
               Use Template
             </Text>
             <Ionicons
               name="arrow-forward-circle"
               size={16}
-              color={template.color}
+              color="#4A0F3A"
             />
           </View>
         </GlassCard>
@@ -89,7 +89,7 @@ FeaturedTemplateItem.displayName = "FeaturedTemplateItem";
 
 export const FeaturedTemplatesStrip: React.FC = React.memo(() => {
   const router = useRouter();
-  const { colors } = useTheme();
+  const { colors: _colors } = useTheme();
 
   const handleSelectTemplate = useCallback(
     (type: string) => {
@@ -109,10 +109,10 @@ export const FeaturedTemplatesStrip: React.FC = React.memo(() => {
     <View className="w-full my-4">
       <View className="flex-row items-center justify-between mb-3">
         <View>
-          <Text className="text-on-surface text-xl font-extrabold tracking-tight">
+          <Text className="text-ink text-xl font-bold tracking-tight">
             Curated Templates
           </Text>
-          <Text className="text-on-surface-variant text-xs mt-0.5">
+          <Text className="text-ink-muted text-xs mt-0.5">
             Designed for business, hospitality & events
           </Text>
         </View>
@@ -123,8 +123,8 @@ export const FeaturedTemplatesStrip: React.FC = React.memo(() => {
           accessibilityRole="button"
           className="flex-row items-center gap-1"
         >
-          <Text className="text-accent text-xs font-bold">See All</Text>
-          <Ionicons name="chevron-forward" size={14} color={colors.accent} />
+          <Text className="text-plum text-xs font-bold">See All</Text>
+          <Ionicons name="chevron-forward" size={14} color="#4A0F3A" />
         </Pressable>
       </View>
 

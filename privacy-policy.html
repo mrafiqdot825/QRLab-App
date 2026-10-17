@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Privacy Policy - QRLab</title>
+  <style>
+    :root {
+      --bg: #F4F8FC;
+      --card-bg: #FFFFFF;
+      --text-main: #0E1B2A;
+      --text-muted: #5A6A7D;
+      --accent: #3E6FA6;
+      --border: #E2E8F0;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.65;
+      color: var(--text-main);
+      background-color: var(--bg);
+      margin: 0;
+      padding: 40px 20px;
+    }
+    .container {
+      max-width: 760px;
+      margin: 0 auto;
+      background: var(--card-bg);
+      padding: 40px;
+      border-radius: 24px;
+      box-shadow: 0 4px 24px rgba(14, 27, 42, 0.06);
+      border: 1px solid var(--border);
+    }
+    h1 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-top: 0;
+      color: var(--text-main);
+    }
+    h2 {
+      font-size: 1.35rem;
+      font-weight: 700;
+      margin-top: 32px;
+      margin-bottom: 12px;
+      color: var(--text-main);
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 8px;
+    }
+    h3 {
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin-top: 18px;
+      margin-bottom: 6px;
+    }
+    p, li {
+      color: var(--text-muted);
+      font-size: 1rem;
+    }
+    ul {
+      padding-left: 20px;
+    }
+    li {
+      margin-bottom: 6px;
+    }
+    .badge {
+      display: inline-block;
+      background: rgba(62, 111, 166, 0.1);
+      color: var(--accent);
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0;
+    }
+    th, td {
+      border: 1px solid var(--border);
+      padding: 10px 14px;
+      text-align: left;
+      font-size: 0.95rem;
+    }
+    th {
+      background: rgba(62, 111, 166, 0.05);
+      color: var(--text-main);
+    }
+    td {
+      color: var(--text-muted);
+    }
+    a {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+    .meta {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <span class="badge">Official Governance</span>
+    <h1>Privacy Policy for QRLab</h1>
+    <div class="meta">
+       <strong>Last Updated:</strong> October 14, 2026<br>
+       <strong>Application ID:</strong> <code>com.rafiqdev.qrstudio</code><br>
+       <strong>Developer:</strong> Muhammad Rafiq
+     </div>
+
+     <h2>1. Overview & Core Philosophy</h2>
+     <p><strong>QRLab</strong> is built with privacy-by-design. All QR code generation, customization, payload rendering, and code scanning operate <strong>100% locally and privately on your physical device</strong>.</p>
+    <p>We do not operate remote databases, servers, or cloud repositories that collect, store, or transmit your personal data.</p>
+
+    <h2>2. Information We Collect</h2>
+    <h3>A. Personal Information</h3>
+    <p><strong>None.</strong> We do not collect, process, sell, or request any personal identifying information (PII) such as your name, phone number, email address, physical address, or location.</p>
+
+    <h3>B. Generated Data & Payloads</h3>
+    <p>Any data entered into the generator (such as URLs, Wi-Fi keys, contact vCards, or text) is processed in-memory and saved exclusively in local sandboxed storage on your device. It never leaves your phone.</p>
+
+    <h3>C. Camera Access</h3>
+    <p>Camera access is requested solely to scan optical QR codes in real time. The feed is processed on-device; no images or video recordings are saved or uploaded.</p>
+
+    <h2>3. Permissions Requested</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Permission</th>
+          <th>Usage Purpose</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>android.permission.CAMERA</code></td>
+          <td>Used exclusively for live camera scanning of optical QR codes.</td>
+        </tr>
+        <tr>
+          <td><code>android.permission.VIBRATE</code></td>
+          <td>Used to trigger subtle tactile feedback on scan success and button taps.</td>
+        </tr>
+        <tr>
+          <td><code>android.permission.INTERNET</code></td>
+          <td>Standard network capabilities for opening web links in your browser.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>4. Third-Party Services & Analytics</h2>
+    <ul>
+      <li><strong>No Analytics Trackers:</strong> We do not embed behavioral tracking SDKs (such as Firebase Analytics, AppsFlyer, or Adjust).</li>
+      <li><strong>No Advertising:</strong> The app does not display third-party advertisements or track advertising IDs (AAID/IDFA).</li>
+    </ul>
+
+    <h2>5. Data Retention & Deletion</h2>
+    <p>Since all data is stored locally on your device, you have complete control. Clearing app storage in Android Settings or uninstalling the app permanently purges all data immediately.</p>
+
+    <h2>6. Children's Privacy</h2>
+    <p>QRLab does not knowingly collect or solicit any information from children under 13. The app is safe for all audiences and complies with Google Play Families Policy and COPPA.</p>
+
+    <h2>7. Contact Information</h2>
+    <p>For questions or support regarding this Privacy Policy, please reach out to:</p>
+    <p>
+      • <strong>Email:</strong> <a href="mailto:mrafiqdot825@gmail.com">mrafiqdot825@gmail.com</a><br>
+      • <strong>Developer Website:</strong> <a href="https://mrafiq.vercel.app/" target="_blank">https://mrafiq.vercel.app/</a>
+    </p>
+  </div>
+</body>
+</html>
+

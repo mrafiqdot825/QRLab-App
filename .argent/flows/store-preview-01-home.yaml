@@ -3,11 +3,11 @@ executionPrerequisite: >-
 steps:
   - await:
       visible:
-        text: Scan-Stopping
+        text: QRLab
   - wait: 2000
   - tap:
-      text: Create QR Now
+      text: Website Link
   - await:
       visible:
-        text: Live QR Preview
+        text: Studio workspace
   - wait: 2500

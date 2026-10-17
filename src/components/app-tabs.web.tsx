@@ -1,6 +1,7 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import {
+  Dimensions,
   LayoutChangeEvent,
   Pressable,
   StyleSheet,
@@ -9,7 +10,7 @@ import {
 } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 
-import { useTheme } from '@/hooks/use-theme';
+import { Palette } from '@/constants/theme';
 
 interface LiquidGlassTabBarProps {
   state: any;
@@ -17,56 +18,81 @@ interface LiquidGlassTabBarProps {
   navigation: any;
 }
 
-const BAR_HEIGHT = 64;
-const FAB_SIZE = 56;
-const NOTCH_RADIUS = 36;
-const NOTCH_SPREAD = 54;
-const NOTCH_DIP = 30;
-const CORNER_RADIUS = 28;
+const NAV_PURPLE = Palette.plum;
+const NAV_INACTIVE = '#6B7280';
 
-// Primary Royal Purple / Indigo matching user uploaded reference image
-const PURPLE_ACCENT = '#635BFF';
+export const TAB_CONFIGS: Record<
+  string,
+  {
+    label: string;
+    activeIcon: keyof typeof Ionicons.glyphMap;
+    inactiveIcon: keyof typeof Ionicons.glyphMap;
+    isCenter?: boolean;
+  }
+> = {
+  index: {
+    label: 'Home',
+    activeIcon: 'home',
+    inactiveIcon: 'home-outline',
+  },
+  explore: {
+    label: 'Search',
+    activeIcon: 'search',
+    inactiveIcon: 'search-outline',
+  },
+  studio: {
+    label: 'Create',
+    activeIcon: 'add',
+    inactiveIcon: 'add',
+    isCenter: true,
+  },
+  inbox: {
+    label: 'Inbox',
+    activeIcon: 'notifications',
+    inactiveIcon: 'notifications-outline',
+  },
+  settings: {
+    label: 'Profile',
+    activeIcon: 'person',
+    inactiveIcon: 'person-outline',
+  },
+};
 
-/**
- * Builds the curved SVG path featuring smooth organic shoulders and a central scoop notch.
- */
-function createCurvedTabBarPath(w: number, h: number): string {
+const BASE_H = 68;
+const HUMP_H = 13;
+const TOTAL_H = BASE_H + HUMP_H + 2; // 83
+const R = BASE_H / 2; // 34
+const HW = 44;
+const Y_BASE = HUMP_H + 1; // 14
+const Y_PEAK = 1;
+const Y_BOTTOM = Y_BASE + BASE_H; // 82
+
+function getPathData(w: number): string {
+  if (w <= 0) return '';
   const cx = w / 2;
-  const leftShoulder = cx - NOTCH_SPREAD;
-  const rightShoulder = cx + NOTCH_SPREAD;
-  const leftDip = cx - NOTCH_RADIUS;
-  const rightDip = cx + NOTCH_RADIUS;
-  const dip = NOTCH_DIP;
-  const topR = CORNER_RADIUS;
-  const botR = CORNER_RADIUS;
-
-  return [
-    `M 0 ${topR}`,
-    `A ${topR} ${topR} 0 0 1 ${topR} 0`,
-    `H ${leftShoulder.toFixed(1)}`,
-    `C ${(leftShoulder + (NOTCH_SPREAD - NOTCH_RADIUS) * 0.55).toFixed(1)} 0, ${(leftDip - 4).toFixed(1)} ${(dip * 0.18).toFixed(1)}, ${leftDip.toFixed(1)} ${(dip * 0.55).toFixed(1)}`,
-    `C ${(leftDip + 8).toFixed(1)} ${(dip * 0.95).toFixed(1)}, ${(cx - NOTCH_RADIUS * 0.45).toFixed(1)} ${dip.toFixed(1)}, ${cx.toFixed(1)} ${dip.toFixed(1)}`,
-    `C ${(cx + NOTCH_RADIUS * 0.45).toFixed(1)} ${dip.toFixed(1)}, ${(rightDip - 8).toFixed(1)} ${(dip * 0.95).toFixed(1)}, ${rightDip.toFixed(1)} ${(dip * 0.55).toFixed(1)}`,
-    `C ${(rightDip + 4).toFixed(1)} ${(dip * 0.18).toFixed(1)}, ${(rightShoulder - (NOTCH_SPREAD - NOTCH_RADIUS) * 0.55).toFixed(1)} 0, ${rightShoulder.toFixed(1)} 0`,
-    `H ${(w - topR).toFixed(1)}`,
-    `A ${topR} ${topR} 0 0 1 ${w} ${topR}`,
-    `V ${(h - botR).toFixed(1)}`,
-    `A ${botR} ${botR} 0 0 1 ${(w - botR).toFixed(1)} ${h}`,
-    `H ${botR}`,
-    `A ${botR} ${botR} 0 0 1 0 ${(h - botR).toFixed(1)}`,
-    `Z`,
-  ].join(' ');
+  return (
+    `M ${R} ${Y_BASE} ` +
+    `L ${cx - HW} ${Y_BASE} ` +
+    `C ${cx - HW * 0.55} ${Y_BASE}, ${cx - HW * 0.35} ${Y_PEAK}, ${cx} ${Y_PEAK} ` +
+    `C ${cx + HW * 0.35} ${Y_PEAK}, ${cx + HW * 0.55} ${Y_BASE}, ${cx + HW} ${Y_BASE} ` +
+    `L ${w - R} ${Y_BASE} ` +
+    `A ${R} ${R} 0 0 1 ${w - R} ${Y_BOTTOM} ` +
+    `L ${R} ${Y_BOTTOM} ` +
+    `A ${R} ${R} 0 0 1 ${R} ${Y_BASE} Z`
+  );
 }
 
-function NavTabButton({
+function StandardWebTabButton({
   isFocused,
   label,
-  iconName,
+  activeIcon,
+  inactiveIcon,
   onPress,
 }: {
   isFocused: boolean;
   label: string;
-  iconName: keyof typeof Ionicons.glyphMap;
+  activeIcon: keyof typeof Ionicons.glyphMap;
+  inactiveIcon: keyof typeof Ionicons.glyphMap;
   onPress: () => void;
 }) {
   return (
@@ -76,19 +102,26 @@ function NavTabButton({
         accessibilityRole="button"
         accessibilityLabel={label}
         accessibilityState={isFocused ? { selected: true } : {}}
-        style={styles.tabButtonPressable}>
+        style={({ pressed }) => [
+          styles.tabButtonPressable,
+          pressed && styles.tabButtonPressed,
+        ]}
+      >
         <Ionicons
-          name={iconName}
-          size={24}
-          color={isFocused ? '#111827' : '#9CA3AF'}
+          name={isFocused ? activeIcon : inactiveIcon}
+          size={22}
+          color={isFocused ? NAV_PURPLE : NAV_INACTIVE}
         />
         <Text
           numberOfLines={1}
           style={[
             styles.tabButtonLabel,
-            { color: isFocused ? '#111827' : '#9CA3AF' },
-            isFocused && styles.tabButtonLabelFocused,
-          ]}>
+            {
+              color: isFocused ? NAV_PURPLE : NAV_INACTIVE,
+              fontWeight: isFocused ? '600' : '500',
+            },
+          ]}
+        >
           {label}
         </Text>
       </Pressable>
@@ -96,147 +129,137 @@ function NavTabButton({
   );
 }
 
-function CenterCreateButton({
-  onPress,
+function CenterWebCreateButton({
   isFocused,
+  label,
+  onPress,
 }: {
-  onPress: () => void;
   isFocused: boolean;
+  label: string;
+  onPress: () => void;
 }) {
   return (
-    <View style={styles.centerFabAnchor} pointerEvents="box-none">
-      <View style={styles.centerFabWrapper}>
-        <Pressable
-          onPress={onPress}
-          accessibilityRole="button"
-          accessibilityLabel="Create QR in Studio"
+    <View style={styles.tabButtonWrapper}>
+      <Pressable
+        onPress={onPress}
+        accessibilityRole="button"
+        accessibilityLabel={label}
+        accessibilityState={isFocused ? { selected: true } : {}}
+        style={({ pressed }) => [
+          styles.centerButtonPressable,
+          pressed && styles.tabButtonPressed,
+        ]}
+      >
+        <View style={styles.centerCircle}>
+          <Ionicons name="add" size={24} color="#FFFFFF" />
+        </View>
+        <Text
+          numberOfLines={1}
           style={[
-            styles.centerFab,
-            { backgroundColor: PURPLE_ACCENT },
-            isFocused && styles.centerFabFocused,
-          ]}>
-          <Ionicons name="add" size={32} color="#FFFFFF" />
-        </Pressable>
-      </View>
+            styles.tabButtonLabel,
+            {
+              color: isFocused ? NAV_PURPLE : NAV_INACTIVE,
+              fontWeight: isFocused ? '600' : '500',
+            },
+          ]}
+        >
+          {label}
+        </Text>
+      </Pressable>
     </View>
   );
 }
 
 export function LiquidGlassTabBar({ state, descriptors: _descriptors, navigation }: LiquidGlassTabBarProps) {
-  const { colors } = useTheme();
-  const [barWidth, setBarWidth] = React.useState(380);
-
-  const onLayout = React.useCallback((e: LayoutChangeEvent) => {
-    const width = e.nativeEvent.layout.width;
-    if (width > 0 && Math.abs(width - barWidth) > 1) {
-      setBarWidth(width);
+  const [containerWidth, setContainerWidth] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return Math.min(window.innerWidth - 32, 440);
     }
-  }, [barWidth]);
+    return Math.min(Dimensions.get('window').width - 32, 440);
+  });
 
-  const svgPath = useMemo(() => {
-    return createCurvedTabBarPath(barWidth, BAR_HEIGHT);
-  }, [barWidth]);
+  const onLayout = useCallback(
+    (event: LayoutChangeEvent) => {
+      const w = Math.round(event.nativeEvent.layout.width);
+      if (w > 0 && Math.abs(w - containerWidth) > 1) {
+        setContainerWidth(w);
+      }
+    },
+    [containerWidth]
+  );
 
-  const handleTabPress = (route: any, isFocused: boolean) => {
-    const event = navigation.emit({
-      type: 'tabPress',
-      target: route.key,
-      canPreventDefault: true,
-    });
+  const handleTabPress = useCallback(
+    (route: any, isFocused: boolean) => {
+      const event = navigation.emit({
+        type: 'tabPress',
+        target: route.key,
+        canPreventDefault: true,
+      });
 
-    if (!isFocused && !event.defaultPrevented) {
-      navigation.navigate(route.name);
-    }
-  };
+      if (!isFocused && !event.defaultPrevented) {
+        navigation.navigate(route.name);
+      }
+    },
+    [navigation]
+  );
 
-  // Map route names to indices
-  const routeMap = useMemo(() => {
-    const map: Record<string, { route: any; index: number }> = {};
-    state.routes.forEach((route: any, index: number) => {
-      map[route.name] = { route, index };
-    });
-    return map;
-  }, [state.routes]);
-
-  const homeRoute = routeMap['index'];
-  const exploreRoute = routeMap['explore'];
-  const studioRoute = routeMap['studio'];
-  const inboxRoute = routeMap['inbox'];
-  const settingsRoute = routeMap['settings'];
+  const pathD = useMemo(() => getPathData(containerWidth), [containerWidth]);
 
   return (
     <View style={styles.tabBarContainer} pointerEvents="box-none">
       <View
-        onLayout={onLayout}
         style={[styles.tabBarInner, styles.shadowElevation]}
-        pointerEvents="box-none">
-        {/* Curved Background SVG */}
-        <Svg
-          width={barWidth}
-          height={BAR_HEIGHT}
-          style={StyleSheet.absoluteFill}
-          pointerEvents="none">
-          <Path
-            d={svgPath}
-            fill={colors.surface || '#FFFFFF'}
-            stroke={colors.border || '#E5E7EB'}
-            strokeWidth={1}
-          />
-        </Svg>
-
-        {/* Tab Items Row with 2 items left, center gap for scoop, 2 items right */}
-        <View style={styles.tabButtonsRow} pointerEvents="box-none">
-          {/* Left Wing: Home */}
-          {homeRoute && (
-            <NavTabButton
-              isFocused={state.index === homeRoute.index}
-              label="Home"
-              iconName={state.index === homeRoute.index ? 'home' : 'home-outline'}
-              onPress={() => handleTabPress(homeRoute.route, state.index === homeRoute.index)}
+        onLayout={onLayout}
+        pointerEvents="box-none"
+      >
+        {containerWidth > 0 && (
+          <Svg
+            width={containerWidth}
+            height={TOTAL_H}
+            viewBox={`0 0 ${containerWidth} ${TOTAL_H}`}
+            style={StyleSheet.absoluteFill}
+          >
+            <Path
+              d={pathD}
+              fill="#FFFFFF"
+              stroke="#E5E7EB"
+              strokeWidth={1.2}
             />
-          )}
-
-          {/* Left Wing: Explore */}
-          {exploreRoute && (
-            <NavTabButton
-              isFocused={state.index === exploreRoute.index}
-              label="Explore"
-              iconName={state.index === exploreRoute.index ? 'search' : 'search-outline'}
-              onPress={() => handleTabPress(exploreRoute.route, state.index === exploreRoute.index)}
-            />
-          )}
-
-          {/* Center Gap for Cutout Notch */}
-          <View style={styles.centerGapSpacer} pointerEvents="none" />
-
-          {/* Right Wing: Inbox */}
-          {inboxRoute && (
-            <NavTabButton
-              isFocused={state.index === inboxRoute.index}
-              label="Inbox"
-              iconName={state.index === inboxRoute.index ? 'notifications' : 'notifications-outline'}
-              onPress={() => handleTabPress(inboxRoute.route, state.index === inboxRoute.index)}
-            />
-          )}
-
-          {/* Right Wing: Profile (Settings Screen) */}
-          {settingsRoute && (
-            <NavTabButton
-              isFocused={state.index === settingsRoute.index}
-              label="Profile"
-              iconName={state.index === settingsRoute.index ? 'person-circle' : 'person-circle-outline'}
-              onPress={() => handleTabPress(settingsRoute.route, state.index === settingsRoute.index)}
-            />
-          )}
-        </View>
-
-        {/* Center Floating Elevated Plus Button */}
-        {studioRoute && (
-          <CenterCreateButton
-            isFocused={state.index === studioRoute.index}
-            onPress={() => handleTabPress(studioRoute.route, state.index === studioRoute.index)}
-          />
+          </Svg>
         )}
+
+        <View style={styles.tabButtonsRow} pointerEvents="box-none">
+          {state.routes.map((route: any, index: number) => {
+            const isFocused = state.index === index;
+            const config = TAB_CONFIGS[route.name] || {
+              label: route.name,
+              activeIcon: 'cube' as const,
+              inactiveIcon: 'cube-outline' as const,
+            };
+
+            if (config.isCenter) {
+              return (
+                <CenterWebCreateButton
+                  key={route.key}
+                  isFocused={isFocused}
+                  label={config.label}
+                  onPress={() => handleTabPress(route, isFocused)}
+                />
+              );
+            }
+
+            return (
+              <StandardWebTabButton
+                key={route.key}
+                isFocused={isFocused}
+                label={config.label}
+                activeIcon={config.activeIcon}
+                inactiveIcon={config.inactiveIcon}
+                onPress={() => handleTabPress(route, isFocused)}
+              />
+            );
+          })}
+        </View>
       </View>
     </View>
   );
@@ -255,71 +278,66 @@ const styles = StyleSheet.create({
   },
   tabBarInner: {
     width: '100%',
-    maxWidth: 420,
-    height: BAR_HEIGHT,
+    maxWidth: 440,
+    height: TOTAL_H,
     position: 'relative',
     alignItems: 'center',
+    justifyContent: 'center',
   },
   shadowElevation: {
-    boxShadow: '0px 8px 24px rgba(30, 42, 56, 0.12)',
+    filter: 'drop-shadow(0px 8px 24px rgba(0, 0, 0, 0.08))',
   } as any,
   tabButtonsRow: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
     flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    width: '100%',
-    height: BAR_HEIGHT,
-    paddingHorizontal: 8,
+    alignItems: 'flex-end',
+    justifyContent: 'space-around',
+    paddingHorizontal: 6,
+    paddingBottom: 11,
   },
   tabButtonWrapper: {
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'flex-end',
   },
   tabButtonPressable: {
     alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 4,
-    minWidth: 54,
+    justifyContent: 'flex-end',
+    width: '100%',
+    paddingVertical: 2,
     cursor: 'pointer',
+    transition: 'transform 0.15s ease, opacity 0.15s ease',
+  } as any,
+  centerButtonPressable: {
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    width: '100%',
+    paddingVertical: 2,
+    cursor: 'pointer',
+    transition: 'transform 0.15s ease, opacity 0.15s ease',
+  } as any,
+  tabButtonPressed: {
+    opacity: 0.85,
+    transform: [{ scale: 0.94 }],
+  },
+  centerCircle: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: NAV_PURPLE,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 4,
+    boxShadow: '0px 4px 12px rgba(74, 15, 58, 0.35)',
   } as any,
   tabButtonLabel: {
     fontSize: 11,
     marginTop: 3,
-    fontWeight: '500',
     letterSpacing: -0.2,
-  },
-  tabButtonLabelFocused: {
-    fontWeight: '700',
-  },
-  centerGapSpacer: {
-    width: NOTCH_SPREAD * 1.5,
-    height: BAR_HEIGHT,
-  },
-  centerFabAnchor: {
-    position: 'absolute',
-    top: -18,
-    left: 0,
-    right: 0,
-    alignItems: 'center',
-    justifyContent: 'center',
-    zIndex: 1001,
-  },
-  centerFabWrapper: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  centerFab: {
-    width: FAB_SIZE,
-    height: FAB_SIZE,
-    borderRadius: FAB_SIZE / 2,
-    alignItems: 'center',
-    justifyContent: 'center',
-    boxShadow: '0px 6px 16px rgba(99, 91, 255, 0.38)',
-    cursor: 'pointer',
-  } as any,
-  centerFabFocused: {
-    borderWidth: 2,
-    borderColor: '#FFFFFF',
+    textAlign: 'center',
   },
 });

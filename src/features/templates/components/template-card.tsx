@@ -39,7 +39,7 @@ export const TemplateCard: React.FC<TemplateCardProps> = memo(
             </LinearGradient>
 
             <View className="gap-1 flex-1">
-              <Text className="text-on-surface text-base font-extrabold" numberOfLines={1}>
+              <Text className="text-ink text-base font-bold" numberOfLines={1}>
                 {template.title}
               </Text>
               <View className="self-start">
@@ -50,11 +50,11 @@ export const TemplateCard: React.FC<TemplateCardProps> = memo(
               </View>
             </View>
           </View>
-          <View style={{ borderColor: colors.border, borderWidth: 1 }} className="p-2 rounded-2xl bg-white shadow-sm shrink-0">
+          <View style={{ borderColor: 'rgba(74, 15, 58, 0.08)', borderWidth: 1 }} className="p-2 rounded-2xl bg-white shadow-sm shrink-0">
             <CustomStyledQRCode
               value={template.sampleValue}
               size={48}
-              color={template.color || "#1E2A38"}
+              color="#4A0F3A"
               backgroundColor="#FFFFFF"
               moduleShape="rounded"
               eyeStyle="rounded"
@@ -62,18 +62,18 @@ export const TemplateCard: React.FC<TemplateCardProps> = memo(
           </View>
         </View>
 
-        <Text className="text-on-surface-variant text-xs leading-5">
+        <Text className="text-ink-muted text-xs leading-5">
           {template.desc}
         </Text>
 
         <GlassButton
           accessibilityLabel={`Use ${template.title} template`}
-          title="USE TEMPLATE"
+          title="Use Template"
           icon="arrow-forward"
           iconPosition="right"
-          variant="glass"
+          variant="secondary"
           onPress={handlePress}
-          className="rounded-2xl py-3"
+          className="rounded-full py-3"
         />
       </GlassCard>
     );

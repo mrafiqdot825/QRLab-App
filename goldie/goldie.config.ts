@@ -1,4 +1,4 @@
-const APP_ROOT = "/Users/muhammadrafiq/Desktop/QR Studio";
+const APP_ROOT = "/Users/muhammadrafiq/Desktop/QR Studio/App";
 
 const config = {
   appRoot: APP_ROOT,
@@ -21,7 +21,7 @@ const config = {
     layout: "classic",
   },
   store: {
-    name: "QR Studio",
+    name: "QRLab",
     subtitle: { "en-US": "Artistic 3D & Vector QR Maker" },
     developer: "Muhammad Rafiq",
     category: "Productivity",

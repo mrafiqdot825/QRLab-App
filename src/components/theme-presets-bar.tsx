@@ -14,22 +14,22 @@ interface ThemePresetsBarProps {
 }
 
 const ACCENT_PALETTE = [
-  '#1E2A38',
-  '#3E6FA6',
-  '#2E7D32',
-  '#6B46C1',
-  '#ED6C02',
-  '#D32F2F',
-  '#0284C7',
-  '#8B5CF6',
-  '#C9A227',
+  '#4A0F3A', // Morrow Deep Plum
+  '#1A1416', // Deep Ink
+  '#1B3B2B', // Dark Forest / Leaf
+  '#2D1B4E', // Deep Plum-Violet
+  '#1A2A56', // Midnight Periwinkle
+  '#4A1810', // Deep Terracotta
+  '#3A2805', // Deep Olive / Butter
+  '#380B2C', // Rich Berry
+  '#2A2035', // Slate Ink
 ];
 
 const PresetCardItem = React.memo(
   ({
     preset,
     isSelected,
-    colors,
+    colors: _colors,
     onSelect,
   }: {
     preset: (typeof CinematicPresets)[0];
@@ -49,29 +49,29 @@ const PresetCardItem = React.memo(
         style={[
           isSelected ? styles.presetCardShadow : undefined,
           {
-            backgroundColor: isSelected ? colors.surface : colors.glassSurfaceSubtle,
-            borderColor: isSelected ? colors.accent : colors.border,
+            backgroundColor: isSelected ? '#FFFFFF' : '#FDF6F2',
+            borderColor: isSelected ? '#4A0F3A' : 'rgba(74, 15, 58, 0.08)',
             borderWidth: isSelected ? 2 : 1,
           },
         ]}
-        className="w-28 p-2.5 rounded-2xl items-center gap-2">
+        className="w-28 p-2.5 rounded-[20px] items-center gap-2">
         <LinearGradient
           colors={preset.gradient}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
-          className="w-full h-14 rounded-xl items-center justify-center relative">
+          className="w-full h-14 rounded-2xl items-center justify-center relative">
           <View
-            className="w-6 h-6 rounded-lg items-center justify-center"
+            className="w-7 h-7 rounded-lg items-center justify-center"
             style={[styles.badgeShadow, { backgroundColor: preset.qrColor }]}>
-            <Ionicons name="qr-code" size={14} color="#FFFFFF" />
+            <Ionicons name="qr-code" size={15} color="#FFFFFF" />
           </View>
           {isSelected && (
-            <View style={{ backgroundColor: colors.accent }} className="absolute top-1.5 right-1.5 w-4 h-4 rounded-full items-center justify-center">
+            <View style={{ backgroundColor: '#4A0F3A' }} className="absolute top-1.5 right-1.5 w-4 h-4 rounded-full items-center justify-center">
               <Ionicons name="checkmark" size={10} color="#FFFFFF" />
             </View>
           )}
         </LinearGradient>
-        <Text className="text-on-surface font-bold text-xs text-center" numberOfLines={1}>
+        <Text className="text-ink font-bold text-xs text-center" numberOfLines={1}>
           {preset.name}
         </Text>
       </Pressable>

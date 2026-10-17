@@ -128,18 +128,20 @@ export const CinematicInput = React.memo(function CinematicInput({
                     }
                     openInDefaultTextEditor(value);
                   }}
-                  className="flex-row items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 active:scale-95">
-                  <Ionicons name="open-outline" size={14} color={Palette.emerald} />
-                  <Text className="text-emerald-400 text-xs font-bold">Open in Phone Editor</Text>
+                  style={{ backgroundColor: '#FDF6F2', borderColor: 'rgba(74, 15, 58, 0.08)' }}
+                  className="flex-row items-center gap-1.5 px-3 py-1.5 rounded-full border active:scale-95">
+                  <Ionicons name="open-outline" size={14} color="#1A1416" />
+                  <Text className="text-ink text-xs font-bold">Open in Editor</Text>
                 </Pressable>
 
                 <Pressable
                   accessibilityLabel="Expand full text editor"
                   accessibilityRole="button"
                   onPress={openEditor}
-                  className="flex-row items-center gap-1.5 px-3 py-1.5 rounded-full bg-accent/15 border border-accent/30 active:scale-95">
-                  <Ionicons name="expand-outline" size={14} color={Palette.cyan} />
-                  <Text className="text-accent text-xs font-bold">Expand Editor</Text>
+                  style={{ backgroundColor: 'rgba(74, 15, 58, 0.08)', borderColor: 'rgba(74, 15, 58, 0.15)' }}
+                  className="flex-row items-center gap-1.5 px-3 py-1.5 rounded-full border active:scale-95">
+                  <Ionicons name="expand-outline" size={14} color="#4A0F3A" />
+                  <Text className="text-plum text-xs font-bold">Expand</Text>
                 </Pressable>
               </View>
             </View>
@@ -223,7 +225,7 @@ export const CinematicInput = React.memo(function CinematicInput({
             <GlassInput
               label="SUBJECT LINE"
               icon="create-outline"
-              placeholder="Inquiry regarding QR Studio"
+              placeholder="Inquiry regarding QRLab"
               value={emailSubject}
               onChangeText={setEmailSubject}
             />

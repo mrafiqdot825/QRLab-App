@@ -1,9 +1,9 @@
 executionPrerequisite: >-
-  App is in Studio on the Live QR Preview screen.
+  App is in Studio on the Studio workspace screen.
 steps:
   - await:
       visible:
-        text: Live QR Preview
+        text: Studio workspace
   - wait: 1500
   - tool: gesture-swipe
     args:
@@ -13,10 +13,9 @@ steps:
       toY: 0.35
       durationMs: 700
   - wait: 2500
-  - echo: "Explore tab in bottom navigation bar"
   - tap:
-      text: Explore
+      text: Search
   - await:
       visible:
-        text: Explore Templates
+        text: Explore practices
   - wait: 2000

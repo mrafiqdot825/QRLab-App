@@ -2,11 +2,11 @@ steps:
   - launch: com.rafiqdev.qrstudio
   - await:
       visible:
-        text: Scan-Stopping
+        text: QRLab
   - tap:
-      text: Explore Templates
+      text: Search
   - await:
       visible:
-        text: Explore Templates
+        text: Explore practices
   - await:
       idle: true

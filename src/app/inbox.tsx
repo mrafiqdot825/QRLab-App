@@ -1,20 +1,22 @@
-import Ionicons from '@expo/vector-icons/Ionicons';
-import { useRouter } from 'expo-router';
-import React, { useCallback, useMemo, useState } from 'react';
-import { Platform, Pressable, ScrollView, Text, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import Ionicons from "@expo/vector-icons/Ionicons";
+import { useRouter } from "expo-router";
+import { useCallback, useMemo, useState } from "react";
+import { Platform, Pressable, ScrollView, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-import { GlassBadge } from '@/components/ui/glass-badge';
-import { GlassCard } from '@/components/ui/glass-card';
-import { GlassChip } from '@/components/ui/glass-chip';
-import { GlassContainer } from '@/components/ui/glass-container';
-import { Palette } from '@/constants/theme';
-import { useTheme } from '@/hooks/use-theme';
-import { withAlpha } from '@/utils/color';
+import { HeroHeaderBlock } from "@/components/morrow/hero-header-block";
+import { TopBar } from "@/components/morrow/top-bar";
+import { GlassBadge } from "@/components/ui/glass-badge";
+import { GlassCard } from "@/components/ui/glass-card";
+import { GlassChip } from "@/components/ui/glass-chip";
+import { GlassContainer } from "@/components/ui/glass-container";
+import { Palette } from "@/constants/theme";
+import { useTheme } from "@/hooks/use-theme";
+import { withAlpha } from "@/utils/color";
 
 interface NotificationItem {
   id: string;
-  category: 'All' | 'Studio' | 'Security' | 'Templates' | 'Updates';
+  category: "All" | "Studio" | "Security" | "Templates" | "Updates";
   title: string;
   badge: string;
   message: string;
@@ -27,79 +29,87 @@ interface NotificationItem {
   actionParams?: Record<string, string>;
 }
 
-const INBOX_CATEGORIES: ('All' | 'Studio' | 'Security' | 'Templates' | 'Updates')[] = [
-  'All',
-  'Studio',
-  'Security',
-  'Templates',
-  'Updates',
-];
+const INBOX_CATEGORIES: (
+  | "All"
+  | "Studio"
+  | "Security"
+  | "Templates"
+  | "Updates"
+)[] = ["All", "Studio", "Security", "Templates", "Updates"];
 
 const INITIAL_NOTIFICATIONS: NotificationItem[] = [
   {
-    id: '1',
-    category: 'Security',
-    title: 'Zero Cloud Storage Guarantee',
-    badge: 'PRIVACY',
-    message: 'All your generated QR codes, encrypted Wi-Fi passwords, and digital vCards remain strictly on your local device. No data is ever transmitted to remote servers.',
-    time: 'Just now',
+    id: "1",
+    category: "Security",
+    title: "Zero Cloud Storage Guarantee",
+    badge: "PRIVACY",
+    message:
+      "All your generated QR codes, encrypted Wi-Fi passwords, and digital vCards remain strictly on your local device. No data is ever transmitted to remote servers.",
+    time: "Just now",
     read: false,
-    icon: 'shield-checkmark',
-    accentColor: Palette.emerald,
-    actionTitle: 'Review Policy',
-    actionRoute: '/settings',
+    icon: "shield-checkmark",
+    accentColor: Palette.leaf,
+    actionTitle: "Review Policy",
+    actionRoute: "/settings",
   },
   {
-    id: '2',
-    category: 'Studio',
-    title: 'High-Resolution Vector Engine',
-    badge: 'HD EXPORT',
-    message: 'Create print-ready 300 DPI vector QR codes in PNG and SVG with rounded eye geometries and embedded brand logos.',
-    time: '2 hours ago',
+    id: "2",
+    category: "Studio",
+    title: "High-Resolution Vector Engine",
+    badge: "HD EXPORT",
+    message:
+      "Create print-ready 300 DPI vector QR codes in PNG and SVG with rounded eye geometries and embedded brand logos.",
+    time: "2 hours ago",
     read: false,
-    icon: 'sparkles',
-    accentColor: '#635BFF',
-    actionTitle: 'Open Studio',
-    actionRoute: '/studio',
+    icon: "sparkles",
+    accentColor: Palette.plum,
+    actionTitle: "Open Studio",
+    actionRoute: "/studio",
   },
   {
-    id: '3',
-    category: 'Templates',
-    title: 'Handcrafted Template Collection',
-    badge: 'COLLECTION',
-    message: 'Explore pre-styled luxury light templates for executive business cards, dining menus, and guest Wi-Fi access.',
-    time: 'Yesterday',
+    id: "3",
+    category: "Templates",
+    title: "Handcrafted Template Collection",
+    badge: "COLLECTION",
+    message:
+      "Explore pre-styled luxury light templates for executive business cards, dining menus, and guest Wi-Fi access.",
+    time: "Yesterday",
     read: true,
-    icon: 'grid',
-    accentColor: Palette.accent,
-    actionTitle: 'Browse Templates',
-    actionRoute: '/explore',
+    icon: "grid",
+    accentColor: Palette.peach,
+    actionTitle: "Browse Templates",
+    actionRoute: "/explore",
   },
   {
-    id: '4',
-    category: 'Updates',
-    title: 'QR Studio v2.0 Released',
-    badge: 'RELEASE',
-    message: 'Your production release is fully equipped with React 19 concurrent responsiveness and butter-smooth 120fps hardware scrolling.',
-    time: '2 days ago',
+    id: "4",
+    category: "Updates",
+    title: "QRLab v3.0 Released",
+    badge: "RELEASE",
+    message:
+      "Your production release is fully equipped with React 19 concurrent responsiveness and butter-smooth 120fps hardware scrolling.",
+    time: "2 days ago",
     read: true,
-    icon: 'rocket',
-    accentColor: '#3E6FA6',
-    actionTitle: 'About QR Studio',
-    actionRoute: '/settings',
+    icon: "rocket",
+    accentColor: Palette.periwinkle,
+    actionTitle: "About QRLab",
+    actionRoute: "/settings",
   },
 ];
 
 export default function InboxScreen() {
   const { colors } = useTheme();
   const router = useRouter();
-  const [notifications, setNotifications] = useState<NotificationItem[]>(INITIAL_NOTIFICATIONS);
-  const [selectedCategory, setSelectedCategory] = useState<'All' | 'Studio' | 'Security' | 'Templates' | 'Updates'>('All');
-  const [filterMode, setFilterMode] = useState<'all' | 'unread'>('all');
+  const [notifications, setNotifications] = useState<NotificationItem[]>(
+    INITIAL_NOTIFICATIONS,
+  );
+  const [selectedCategory, setSelectedCategory] = useState<
+    "All" | "Studio" | "Security" | "Templates" | "Updates"
+  >("All");
+  const [filterMode, setFilterMode] = useState<"all" | "unread">("all");
 
   const unreadCount = useMemo(
     () => notifications.filter((n) => !n.read).length,
-    [notifications]
+    [notifications],
   );
 
   const handleMarkAllRead = useCallback(() => {
@@ -108,14 +118,15 @@ export default function InboxScreen() {
 
   const handleToggleRead = useCallback((id: string) => {
     setNotifications((prev) =>
-      prev.map((n) => (n.id === id ? { ...n, read: !n.read } : n))
+      prev.map((n) => (n.id === id ? { ...n, read: !n.read } : n)),
     );
   }, []);
 
   const filteredItems = useMemo(() => {
     return notifications.filter((item) => {
-      if (filterMode === 'unread' && item.read) return false;
-      if (selectedCategory !== 'All' && item.category !== selectedCategory) return false;
+      if (filterMode === "unread" && item.read) return false;
+      if (selectedCategory !== "All" && item.category !== selectedCategory)
+        return false;
       return true;
     });
   }, [notifications, filterMode, selectedCategory]);
@@ -126,44 +137,52 @@ export default function InboxScreen() {
         <ScrollView
           className="flex-1"
           contentContainerStyle={{
-            alignItems: 'center',
+            alignItems: "center",
             paddingHorizontal: 20,
             paddingTop: 12,
             paddingBottom: 120,
           }}
           showsVerticalScrollIndicator={false}
           scrollEventThrottle={16}
-          removeClippedSubviews={Platform.OS !== 'web'}
-          overScrollMode="never">
+          removeClippedSubviews={Platform.OS !== "web"}
+          overScrollMode="never"
+        >
           <View className="w-full max-w-[640px]">
-            {/* Header Section (Consistent with Home, Explore, and Settings) */}
-            <View className="my-3 flex-row items-end justify-between w-full">
-              <View className="flex-1">
-                <Text className="text-on-surface text-3xl font-extrabold tracking-tight">
-                  Inbox & Updates
-                </Text>
-                <Text className="text-on-surface-variant text-sm mt-1 leading-5">
-                  System notices, feature announcements, and privacy advisories.
-                </Text>
-              </View>
+            {/* Top Bar with Wordmark */}
+            <TopBar title="QRLab" />
 
-              {unreadCount > 0 && (
+            {/* Signature Morrow Hero Header Block */}
+            <HeroHeaderBlock
+              eyebrow="Activity & library"
+              headlineLine1="Notices &"
+              headlineLine2="updates."
+              subtitle="System notices, feature announcements, and privacy advisories."
+            />
+
+            {unreadCount > 0 && (
+              <View className="flex-row justify-end mb-2">
                 <Pressable
                   accessibilityRole="button"
                   accessibilityLabel="Mark all notifications as read"
                   onPress={handleMarkAllRead}
-                  style={{ backgroundColor: colors.secondaryBackground, borderColor: colors.border }}
-                  className="px-3.5 py-1.5 rounded-full border active:opacity-70 ml-2">
-                  <Text className="text-accent text-xs font-bold">Mark all read</Text>
+                  style={{
+                    backgroundColor: colors.surface,
+                    borderColor: colors.border,
+                  }}
+                  className="px-4 py-1.5 rounded-full border active:opacity-70 shadow-sm"
+                >
+                  <Text className="text-plum text-xs font-bold">
+                    Mark all as read
+                  </Text>
                 </Pressable>
-              )}
-            </View>
+              </View>
+            )}
 
             {/* Quick Unread Status Strip */}
             <View className="flex-row items-center justify-between my-2">
               <View className="flex-row items-center gap-2">
                 <GlassBadge
-                  label={unreadCount > 0 ? `${unreadCount} UNREAD` : 'ALL READ'}
+                  label={unreadCount > 0 ? `${unreadCount} UNREAD` : "ALL READ"}
                   variant="primary"
                 />
                 <Text className="text-on-surface-variant text-xs font-medium">
@@ -175,17 +194,24 @@ export default function InboxScreen() {
                 <Pressable
                   accessibilityRole="button"
                   accessibilityLabel="Show all notices"
-                  onPress={() => setFilterMode('all')}
+                  onPress={() => setFilterMode("all")}
                   style={{
-                    backgroundColor: filterMode === 'all' ? colors.surface : 'transparent',
-                    borderColor: filterMode === 'all' ? colors.border : 'transparent',
+                    backgroundColor:
+                      filterMode === "all" ? colors.surface : "transparent",
+                    borderColor:
+                      filterMode === "all" ? colors.border : "transparent",
                   }}
-                  className="px-3 py-1 rounded-full border">
+                  className="px-3 py-1 rounded-full border"
+                >
                   <Text
                     style={{
-                      color: filterMode === 'all' ? colors.primaryText : colors.secondaryText,
+                      color:
+                        filterMode === "all"
+                          ? colors.primaryText
+                          : colors.secondaryText,
                     }}
-                    className={`text-xs ${filterMode === 'all' ? 'font-bold' : 'font-medium'}`}>
+                    className={`text-xs ${filterMode === "all" ? "font-bold" : "font-medium"}`}
+                  >
                     All
                   </Text>
                 </Pressable>
@@ -193,17 +219,24 @@ export default function InboxScreen() {
                 <Pressable
                   accessibilityRole="button"
                   accessibilityLabel="Show unread notices only"
-                  onPress={() => setFilterMode('unread')}
+                  onPress={() => setFilterMode("unread")}
                   style={{
-                    backgroundColor: filterMode === 'unread' ? colors.surface : 'transparent',
-                    borderColor: filterMode === 'unread' ? colors.border : 'transparent',
+                    backgroundColor:
+                      filterMode === "unread" ? colors.surface : "transparent",
+                    borderColor:
+                      filterMode === "unread" ? colors.border : "transparent",
                   }}
-                  className="px-3 py-1 rounded-full border">
+                  className="px-3 py-1 rounded-full border"
+                >
                   <Text
                     style={{
-                      color: filterMode === 'unread' ? colors.primaryText : colors.secondaryText,
+                      color:
+                        filterMode === "unread"
+                          ? colors.primaryText
+                          : colors.secondaryText,
                     }}
-                    className={`text-xs ${filterMode === 'unread' ? 'font-bold' : 'font-medium'}`}>
+                    className={`text-xs ${filterMode === "unread" ? "font-bold" : "font-medium"}`}
+                  >
                     Unread ({unreadCount})
                   </Text>
                 </Pressable>
@@ -215,7 +248,8 @@ export default function InboxScreen() {
               horizontal
               showsHorizontalScrollIndicator={false}
               className="w-full my-2"
-              contentContainerStyle={{ gap: 8, paddingVertical: 4 }}>
+              contentContainerStyle={{ gap: 8, paddingVertical: 4 }}
+            >
               {INBOX_CATEGORIES.map((cat) => (
                 <GlassChip
                   key={cat}
@@ -233,15 +267,20 @@ export default function InboxScreen() {
               <GlassCard className="p-8 items-center justify-center my-6 gap-3">
                 <View
                   style={{ backgroundColor: colors.secondaryBackground }}
-                  className="w-16 h-16 rounded-3xl items-center justify-center">
-                  <Ionicons name="mail-open-outline" size={30} color={colors.secondaryText} />
+                  className="w-16 h-16 rounded-3xl items-center justify-center"
+                >
+                  <Ionicons
+                    name="mail-open-outline"
+                    size={30}
+                    color={colors.secondaryText}
+                  />
                 </View>
-                <Text className="text-on-surface text-base font-extrabold text-center">
+                <Text className="text-on-surface text-lg font-serif font-bold text-center">
                   No Notices Found
                 </Text>
                 <Text className="text-on-surface-variant text-xs text-center max-w-[260px] leading-5">
-                  {filterMode === 'unread'
-                    ? 'You have caught up with all unread messages!'
+                  {filterMode === "unread"
+                    ? "You have caught up with all unread messages!"
                     : `No notices found in the "${selectedCategory}" category.`}
                 </Text>
               </GlassCard>
@@ -260,22 +299,31 @@ export default function InboxScreen() {
                       }
                     }}
                     className={`p-5 gap-3.5 relative overflow-hidden ${
-                      !item.read ? 'border-l-4 border-l-[#3E6FA6]' : ''
-                    }`}>
+                      !item.read ? "border-l-4 border-l-plum" : ""
+                    }`}
+                  >
                     <View className="flex-row items-start justify-between gap-3">
                       <View className="flex-row items-start gap-3.5 flex-1">
-                        {/* Consistent 48x48 icon badge matching QuickActionsBar and TemplateCard */}
+                        {/* Consistent 44x44 icon badge matching QuickActionsBar and TemplateCard */}
                         <View
-                          style={{ backgroundColor: withAlpha(item.accentColor, 0.12) }}
-                          className="w-11 h-11 rounded-2xl items-center justify-center shrink-0 mt-0.5">
-                          <Ionicons name={item.icon} size={22} color={item.accentColor} />
+                          style={{
+                            backgroundColor: withAlpha(item.accentColor, 0.14),
+                          }}
+                          className="w-11 h-11 rounded-2xl items-center justify-center shrink-0 mt-0.5"
+                        >
+                          <Ionicons
+                            name={item.icon}
+                            size={22}
+                            color={item.accentColor}
+                          />
                         </View>
 
                         <View className="flex-1 gap-1">
                           <View className="flex-row items-center justify-between gap-2">
                             <Text
                               className="text-on-surface text-base font-extrabold tracking-tight flex-1"
-                              numberOfLines={1}>
+                              numberOfLines={1}
+                            >
                               {item.title}
                             </Text>
                             <GlassBadge label={item.badge} variant="primary" />
@@ -290,9 +338,14 @@ export default function InboxScreen() {
                     {/* Footer Row */}
                     <View
                       style={{ borderColor: colors.border }}
-                      className="flex-row items-center justify-between pt-2.5 border-t">
+                      className="flex-row items-center justify-between pt-2.5 border-t"
+                    >
                       <View className="flex-row items-center gap-1.5">
-                        <Ionicons name="time-outline" size={13} color={colors.secondaryText} />
+                        <Ionicons
+                          name="time-outline"
+                          size={13}
+                          color={colors.secondaryText}
+                        />
                         <Text className="text-on-surface-variant text-[11px] font-medium">
                           {item.time}
                         </Text>
@@ -300,14 +353,18 @@ export default function InboxScreen() {
 
                       {item.actionRoute ? (
                         <View className="flex-row items-center gap-1">
-                          <Text className="text-xs font-bold text-accent">
-                            {item.actionTitle || 'Open'}
+                          <Text className="text-xs font-bold text-plum">
+                            {item.actionTitle || "Open"}
                           </Text>
-                          <Ionicons name="arrow-forward" size={13} color={colors.accent} />
+                          <Ionicons
+                            name="arrow-forward"
+                            size={13}
+                            color={Palette.plum}
+                          />
                         </View>
                       ) : (
                         <Text className="text-[11px] text-on-surface-variant">
-                          {item.read ? 'Read' : 'Tap to mark read'}
+                          {item.read ? "Read" : "Tap to mark read"}
                         </Text>
                       )}
                     </View>

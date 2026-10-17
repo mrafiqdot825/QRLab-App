@@ -41,7 +41,7 @@ export const CustomStyledQRCode: React.FC<CustomStyledQRCodeProps> = React.memo(
 }) => {
   const qrData = useMemo(() => {
     try {
-      const qr = QRCodeGenerator.create(value || 'https://qrstudio.me', {
+      const qr = QRCodeGenerator.create(value || 'https://qrlab.me', {
         errorCorrectionLevel: ecl,
       });
       return qr.modules;

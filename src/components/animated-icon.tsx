@@ -1,6 +1,6 @@
 import { Image } from 'expo-image';
 import * as SplashScreen from 'expo-splash-screen';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Dimensions, StyleSheet, View } from 'react-native';
 import Animated, { Easing, Keyframe, runOnJS } from 'react-native-reanimated';
 
@@ -30,13 +30,26 @@ export function AnimatedSplashOverlay() {
   const [animate, setAnimate] = useState(false);
   const [visible, setVisible] = useState(true);
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setVisible(false);
+    }, 1200);
+    return () => clearTimeout(timer);
+  }, []);
+
   if (!visible) return null;
 
-  const image = <Image style={styles.image} source={require('@/assets/images/icon.png')} />;
-
+  const image = (
+    <Image
+      style={styles.splashLogo}
+      source={require('@/assets/images/splash-icon.png')}
+      contentFit="contain"
+    />
+  );
 
   return animate ? (
     <Animated.View
+      pointerEvents="none"
       entering={splashKeyframe.duration(DURATION).withCallback((finished) => {
         'worklet';
         if (finished) {
@@ -48,6 +61,7 @@ export function AnimatedSplashOverlay() {
     </Animated.View>
   ) : (
     <View
+      pointerEvents="none"
       onLayout={() => {
         SplashScreen.hideAsync().finally(() => {
           setAnimate(true);
@@ -115,19 +129,24 @@ const styles = StyleSheet.create({
     zIndex: 100,
   },
   image: {
-    width: 76,
-    height: 71,
+    width: 80,
+    height: 80,
+    borderRadius: 20,
   },
   background: {
     borderRadius: 40,
-    experimental_backgroundImage: `linear-gradient(180deg, #3E6FA6, #2E537E)`,
+    experimental_backgroundImage: `linear-gradient(135deg, #372EFF, #6B9DFF)`,
     width: 128,
     height: 128,
     position: 'absolute',
   },
+  splashLogo: {
+    width: 120,
+    height: 120,
+  },
   splashOverlay: {
     ...StyleSheet.absoluteFill,
-    backgroundColor: '#F0F8FF',
+    backgroundColor: '#372EFF',
     alignItems: 'center',
     justifyContent: 'center',
     zIndex: 1000,

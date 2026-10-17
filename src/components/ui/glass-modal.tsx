@@ -86,9 +86,9 @@ export function GlassModal({
           {isSheet && <View style={{ backgroundColor: colors.border }} className="w-12 h-1.5 rounded-full self-center mt-3 mb-1" />}
 
           {/* Header */}
-          <View style={{ borderColor: colors.border }} className="flex-row items-center justify-between px-6 pt-4 pb-3 border-b">
+          <View style={{ borderColor: 'rgba(74, 15, 58, 0.06)' }} className="flex-row items-center justify-between px-6 pt-4 pb-3 border-b">
             {title ? (
-              <Text className="text-on-surface text-xl font-extrabold tracking-tight">{title}</Text>
+              <Text className="text-ink text-2xl font-serif font-bold tracking-tight">{title}</Text>
             ) : (
               <View />
             )}
@@ -101,9 +101,9 @@ export function GlassModal({
                 }
                 onClose();
               }}
-              style={{ backgroundColor: colors.secondaryBackground }}
-              className="w-8 h-8 rounded-full items-center justify-center active:opacity-70">
-              <Ionicons name="close" size={18} color={colors.secondaryText} />
+              style={{ backgroundColor: '#FDF6F2', borderWidth: 1, borderColor: 'rgba(74, 15, 58, 0.08)' }}
+              className="w-9 h-9 rounded-full items-center justify-center active:opacity-70">
+              <Ionicons name="close" size={18} color="#1A1416" />
             </Pressable>
           </View>
 

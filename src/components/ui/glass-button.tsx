@@ -66,25 +66,35 @@ export const GlassButton = React.memo(function GlassButton({
   const isGhost = variant === 'ghost';
   const isGlass = variant === 'glass';
 
-  const iconColor = isPrimary ? '#FFFFFF' : colors.accent;
+  const iconColor = isPrimary ? '#FFFFFF' : colors.primaryText;
 
   const surfaceStyle = isPrimary
-    ? { backgroundColor: disabled ? colors.disabledBg : colors.accent }
+    ? {
+        backgroundColor: disabled ? colors.disabledBg : Palette.plum,
+        boxShadow: disabled ? 'none' : '0px 4px 14px rgba(74, 15, 58, 0.22)',
+      }
     : isSecondary
-    ? { backgroundColor: colors.surface, borderColor: colors.border }
+    ? {
+        backgroundColor: '#FFFFFF',
+        borderColor: colors.border,
+        boxShadow: '0px 4px 12px rgba(74, 15, 58, 0.05)',
+      }
     : isGlass
-    ? { backgroundColor: colors.glassSurfaceSubtle, borderColor: colors.border }
+    ? {
+        backgroundColor: '#FDF6F2',
+        borderColor: colors.border,
+      }
     : undefined;
 
   return (
-    <Animated.View className={`rounded-2xl ${className}`} style={[animatedStyle, style]}>
+    <Animated.View className={`rounded-full ${className}`} style={[animatedStyle, style]}>
       <Pressable
         onPress={handlePress}
         onPressIn={handlePressIn}
         onPressOut={handlePressOut}
         disabled={disabled}
         style={surfaceStyle}
-        className={`px-6 py-3.5 rounded-2xl flex-row items-center justify-center gap-2 relative overflow-hidden ${
+        className={`px-6 py-3.5 rounded-full flex-row items-center justify-center gap-2 relative overflow-hidden ${
           isPrimary
             ? ''
             : isSecondary || isGlass
@@ -100,7 +110,7 @@ export const GlassButton = React.memo(function GlassButton({
         {title ? (
           <Text
             className={`font-bold text-sm tracking-wide ${
-              isPrimary ? 'text-white' : 'text-on-surface'
+              isPrimary ? 'text-white' : 'text-ink'
             }`}
             style={disabled ? { color: colors.disabledText } : undefined}>
             {title}

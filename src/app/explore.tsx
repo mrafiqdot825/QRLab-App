@@ -1,3 +1,5 @@
+import { HeroHeaderBlock } from "@/components/morrow/hero-header-block";
+import { TopBar } from "@/components/morrow/top-bar";
 import { GlassContainer } from "@/components/ui/glass-container";
 import { CategoryBar } from "@/features/templates/components/category-bar";
 import { TemplateCard } from "@/features/templates/components/template-card";
@@ -6,8 +8,8 @@ import {
   TEMPLATES_LIST,
 } from "@/features/templates/constants/templates";
 import { useRouter } from "expo-router";
-import { useCallback, useMemo, useState } from "react";
-import { FlatList, Platform, Text, View } from "react-native";
+import React, { useCallback, useMemo, useState } from "react";
+import { FlatList, Platform, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function ExploreScreen() {
@@ -29,6 +31,10 @@ export default function ExploreScreen() {
     [router],
   );
 
+  const handleOpenSettings = useCallback(() => {
+    router.navigate("/settings");
+  }, [router]);
+
   const renderItem = useCallback(
     ({ item }: { item: QRTemplate }) => (
       <View
@@ -46,16 +52,22 @@ export default function ExploreScreen() {
   const ListHeaderComponent = useMemo(
     () => (
       <View style={{ width: "100%", maxWidth: 640, alignSelf: "center" }}>
-        {/* Header Section */}
-        <View className="my-3 w-full">
-          <Text className="text-on-surface text-3xl font-extrabold tracking-tight">
-            Explore Templates
-          </Text>
-          <Text className="text-on-surface-variant text-sm mt-1 leading-5">
-            Pre-designed luxury light templates for business, hospitality, and
-            events.
-          </Text>
-        </View>
+        {/* TOP BAR */}
+        <TopBar
+          title="QRLab"
+          actionIcon="person-outline"
+          onPressAction={handleOpenSettings}
+        />
+
+        {/* HERO HEADER BLOCK (Matches reference screen 2) */}
+        <HeroHeaderBlock
+          eyebrow="Explore practices"
+          headlineLine1="Small steps,"
+          headlineLine2="softer days."
+          subtitle="Simple practices to support a calmer, on-brand presence."
+          showBotanical={true}
+        />
+
         {/* Category Filter Chips */}
         <CategoryBar
           selectedCategory={selectedCat}
@@ -64,7 +76,7 @@ export default function ExploreScreen() {
         <View className="h-3" />
       </View>
     ),
-    [selectedCat],
+    [selectedCat, handleOpenSettings],
   );
 
   return (
@@ -77,8 +89,8 @@ export default function ExploreScreen() {
           ListHeaderComponent={ListHeaderComponent}
           contentContainerStyle={{
             paddingHorizontal: 20,
-            paddingTop: 12,
-            paddingBottom: 120,
+            paddingTop: 8,
+            paddingBottom: 130,
           }}
           showsVerticalScrollIndicator={false}
           initialNumToRender={5}

@@ -1,3 +1,5 @@
+import { HeroHeaderBlock } from "@/components/morrow/hero-header-block";
+import { TopBar } from "@/components/morrow/top-bar";
 import { ActionButtons3D } from "@/components/action-buttons-3d";
 import { CinematicInput } from "@/components/cinematic-input";
 import { CustomizationStudioControls } from "@/components/customization-studio-controls";
@@ -10,8 +12,8 @@ import { useQRGenerator } from "@/hooks/use-qr-generator";
 import { CinematicPresets, PresetId } from "@/constants/theme";
 import { QRType } from "@/types/qr";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { useCallback, useMemo, useState } from "react";
-import { Platform, ScrollView, Text, View } from "react-native";
+import React, { useCallback, useMemo, useState } from "react";
+import { Platform, ScrollView, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function StudioScreen() {
@@ -41,7 +43,7 @@ export default function StudioScreen() {
   const effectiveQrColor = useMemo(() => {
     if (customOpts.fgColor) return customOpts.fgColor;
     const preset = CinematicPresets.find((p) => p.id === presetId);
-    return preset?.qrColor || '#1E2A38';
+    return preset?.qrColor || '#4A0F3A';
   }, [customOpts.fgColor, presetId]);
 
   const handleSelectPreset = useCallback(
@@ -58,6 +60,10 @@ export default function StudioScreen() {
     [setCustomOpts]
   );
 
+  const handleOpenSettings = useCallback(() => {
+    router.navigate("/settings");
+  }, [router]);
+
   return (
     <GlassContainer>
       <SafeAreaView className="flex-1">
@@ -66,8 +72,8 @@ export default function StudioScreen() {
           contentContainerStyle={{
             alignItems: "center",
             paddingHorizontal: 20,
-            paddingTop: 12,
-            paddingBottom: 120,
+            paddingTop: 8,
+            paddingBottom: 130,
           }}
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
@@ -76,15 +82,21 @@ export default function StudioScreen() {
           overScrollMode="never"
         >
           <View className="w-full max-w-[640px]">
+            {/* Top Bar */}
+            <TopBar
+              title="QRLab"
+              actionIcon="person-outline"
+              onPressAction={handleOpenSettings}
+            />
+
             {/* Header Section */}
-            <View className="my-3">
-              <Text className="text-on-surface text-3xl font-extrabold tracking-tight">
-                Generator & Studio
-              </Text>
-              <Text className="text-on-surface-variant text-sm mt-1">
-                Configure data payloads and customize live 3D visual styles.
-              </Text>
-            </View>
+            <HeroHeaderBlock
+              eyebrow="Studio workspace"
+              headlineLine1="Design &"
+              headlineLine2="customize."
+              subtitle="Configure data payloads and customize live visual styles."
+              showBotanical={true}
+            />
             {/* Type selector pills */}
             <QRTypeSelector
               selectedType={selectedType}

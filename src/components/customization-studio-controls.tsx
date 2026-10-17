@@ -33,12 +33,12 @@ export const CustomizationStudioControls = React.memo(function CustomizationStud
     <GlassCard className="p-5 my-3 w-full gap-5">
       <View className="flex-row items-center justify-between">
         <View>
-          <Text className="text-on-surface text-base font-extrabold">Studio Customization</Text>
-          <Text className="text-on-surface-variant text-xs mt-0.5">
+          <Text className="text-ink text-base font-bold">Studio Customization</Text>
+          <Text className="text-ink-muted text-xs mt-0.5">
             Configure matrix module shapes, eye frames, and badge logos.
           </Text>
         </View>
-        <Ionicons name="options-outline" size={20} color={Palette.cyan} />
+        <Ionicons name="options-outline" size={20} color="#4A0F3A" />
       </View>
 
       {/* Module Shape Controls */}
@@ -85,11 +85,11 @@ export const CustomizationStudioControls = React.memo(function CustomizationStud
           Center Brand Badge
         </Text>
         <View className="flex-row gap-2 w-full flex-wrap sm:flex-nowrap">
-          {(['none', 'qrstudio', 'shield', 'star'] as const).map((logoItem) => (
+          {(['none', 'qrlab', 'shield', 'star'] as const).map((logoItem) => (
             <GlassChip
               key={logoItem}
               label={logoItem.toUpperCase()}
-              selected={currentLogo === logoItem}
+              selected={currentLogo === logoItem || (logoItem === 'qrlab' && currentLogo === 'qrstudio')}
               onPress={() => updateOption('logo', logoItem as any)}
               style={{ flex: 1, minWidth: 65 }}
               className="flex-1 justify-center"

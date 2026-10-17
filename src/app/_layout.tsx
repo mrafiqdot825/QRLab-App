@@ -34,10 +34,10 @@ function AppNavigation() {
         card: colors.surface,
         text: colors.primaryText,
         border: colors.border,
-        primary: '#3E6FA6',
+        primary: colors.plum,
       },
     }),
-    [colors.background, colors.surface, colors.primaryText, colors.border]
+    [colors.background, colors.surface, colors.primaryText, colors.border, colors.plum]
   );
 
   const renderTabBar = React.useCallback(
@@ -62,15 +62,15 @@ function AppNavigation() {
           }}
         />
         <Tabs.Screen
-          name="studio"
+          name="explore"
           options={{
-            title: 'Studio',
+            title: 'Search',
           }}
         />
         <Tabs.Screen
-          name="explore"
+          name="studio"
           options={{
-            title: 'Explore',
+            title: 'Create',
           }}
         />
         <Tabs.Screen

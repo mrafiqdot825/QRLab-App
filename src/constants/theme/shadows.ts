@@ -1,24 +1,29 @@
 import { StyleSheet } from 'react-native';
 
-export const AliceBlueShadows = StyleSheet.create({
+export const MorrowShadows = StyleSheet.create({
   subtle: {
-    boxShadow: '0px 4px 16px rgba(30, 42, 56, 0.08)',
+    boxShadow: '0px 4px 16px rgba(74, 15, 58, 0.04)',
     elevation: 2,
   },
+  card: {
+    boxShadow: '0px 8px 24px rgba(74, 15, 58, 0.06)',
+    elevation: 3,
+  },
   dock: {
-    boxShadow: '0px 6px 20px rgba(30, 42, 56, 0.10)',
+    boxShadow: '0px 8px 24px rgba(74, 15, 58, 0.08)',
     elevation: 6,
   },
   modal: {
-    boxShadow: '0px 10px 28px rgba(30, 42, 56, 0.12)',
+    boxShadow: '0px 12px 32px rgba(74, 15, 58, 0.12)',
     elevation: 12,
   },
   glowBlue: {
-    boxShadow: '0px 4px 16px rgba(62, 111, 166, 0.15)',
+    boxShadow: '0px 4px 20px rgba(74, 15, 58, 0.15)',
     elevation: 4,
   },
 });
 
-export const MidnightShadows = AliceBlueShadows;
-export const Shadows = AliceBlueShadows;
+export const AliceBlueShadows = MorrowShadows;
+export const MidnightShadows = MorrowShadows;
+export const Shadows = MorrowShadows;
 

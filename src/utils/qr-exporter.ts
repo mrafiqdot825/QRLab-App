@@ -39,7 +39,7 @@ export function generateSVGContent(
   payloadValue: string,
   options?: SVGExportOptions
 ): string {
-  const safePayload = payloadValue || 'https://qrstudio.me';
+  const safePayload = payloadValue || 'https://qrlab.me';
   const fgColor = options?.fgColor || '#1E2A38';
   const bgColor = options?.bgColor || '#FFFFFF';
   const moduleShape = options?.moduleShape || 'rounded';
@@ -53,7 +53,7 @@ export function generateSVGContent(
     const qr = QRCodeGenerator.create(safePayload, { errorCorrectionLevel: ecl });
     qrData = qr.modules;
   } catch {
-    const fallbackQr = QRCodeGenerator.create('https://qrstudio.me', { errorCorrectionLevel: 'M' });
+    const fallbackQr = QRCodeGenerator.create('https://qrlab.me', { errorCorrectionLevel: 'M' });
     qrData = fallbackQr.modules;
   }
 
@@ -162,7 +162,7 @@ export function generateSVGContent(
     } else if (logo === 'heart') {
       vectorPath = 'M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z';
     } else {
-      // 'qrstudio' or default
+      // 'qrlab', 'qrstudio' or default
       vectorPath = 'M3 3h8v8H3V3zm2 2v4h4V5H5zm8-2h8v8h-8V3zm2 2v4h4V5h-4zM3 13h8v8H3v-8zm2 2v4h4v-4H5zm13-2h3v3h-3v-3zm0 5h3v3h-3v-3zm-5-5h3v8h-3v-8z';
     }
 
@@ -178,7 +178,7 @@ export function generateSVGContent(
   return [
     '<?xml version="1.0" encoding="UTF-8"?>',
     `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${totalSize} ${totalSize}" width="100%" height="100%">`,
-    '  <!-- QR Studio Authentic Vector Export -->',
+    '  <!-- QRLab Authentic Vector Export -->',
     `  <rect width="${totalSize}" height="${totalSize}" fill="${bgColor}" rx="16"/>`,
     '  <g id="qr-eyes">',
     `    ${eyes.join('\n    ')}`,
@@ -256,7 +256,7 @@ export async function getQRBase64(
     logo?: LogoPreset;
   }
 ): Promise<string> {
-  const payloadValue = exportOptions?.payloadValue || 'https://qrstudio.me';
+  const payloadValue = exportOptions?.payloadValue || 'https://qrlab.me';
   const fgColor = exportOptions?.fgColor || '#1E2A38';
   const bgColor = exportOptions?.bgColor || '#FFFFFF';
 
@@ -387,7 +387,7 @@ export async function saveToFile(
       return { success: true, message: 'High-resolution QR code downloaded to computer.' };
     }
 
-    const tempFilename = `qrstudio-export-${Date.now()}.png`;
+    const tempFilename = `qrlab-export-${Date.now()}.png`;
     tempUri = await writeTempFile(base64Data, tempFilename, true);
 
     const sharingAvailable = await Sharing.isAvailableAsync();
@@ -443,7 +443,7 @@ export async function shareToWhatsApp(
     }
 
     const base64Data = await getQRBase64(qrRef, { payloadValue, ...exportOptions });
-    tempUri = await writeTempFile(base64Data, `qrstudio-whatsapp-${Date.now()}.png`, true);
+    tempUri = await writeTempFile(base64Data, `qrlab-whatsapp-${Date.now()}.png`, true);
 
     const waDeepLink = `whatsapp://send?text=${encodeURIComponent(textMsg)}`;
     const canOpenWA = await Linking.canOpenURL(waDeepLink);
@@ -496,7 +496,7 @@ export async function shareToInstagram(
     }
 
     const base64Data = await getQRBase64(qrRef, exportOptions);
-    tempUri = await writeTempFile(base64Data, `qrstudio-instagram-${Date.now()}.png`, true);
+    tempUri = await writeTempFile(base64Data, `qrlab-instagram-${Date.now()}.png`, true);
 
     const igDeepLink = 'instagram://app';
     const canOpenIG = await Linking.canOpenURL(igDeepLink);
@@ -555,7 +555,7 @@ export async function shareGeneral(
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
-        link.download = `QRStudio-${Date.now()}.svg`;
+        link.download = `QRLab-${Date.now()}.svg`;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
@@ -576,7 +576,7 @@ export async function shareGeneral(
       if (typeof navigator !== 'undefined' && navigator.share) {
         try {
           await navigator.share({
-            title: 'QR Studio Code',
+            title: 'QRLab Code',
             text: payloadValue,
             url: window.location.href,
           });
@@ -588,7 +588,7 @@ export async function shareGeneral(
 
       const link = document.createElement('a');
       link.href = `data:image/png;base64,${base64Data}`;
-      link.download = `QRStudio-${Date.now()}.png`;
+      link.download = `QRLab-${Date.now()}.png`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -626,7 +626,7 @@ export async function shareGeneral(
       });
     }
 
-    tempUri = await writeTempFile(content, `qrstudio-code-${Date.now()}.${ext}`, isBase64);
+    tempUri = await writeTempFile(content, `qrlab-code-${Date.now()}.${ext}`, isBase64);
 
     const sharingAvailable = await Sharing.isAvailableAsync();
     if (!sharingAvailable) {
@@ -657,7 +657,7 @@ export async function shareGeneral(
 export async function openInDefaultTextEditor(text: string): Promise<ExportResult> {
   let tempUri: string | undefined;
   try {
-    const textContent = text || 'Plain text content from QR Studio';
+    const textContent = text || 'Plain text content from QRLab';
 
     if (Platform.OS === 'web') {
       const blob = new Blob([textContent], { type: 'text/plain;charset=utf-8' });
