@@ -195,7 +195,7 @@ export function ScannerModal({ visible, onClose }: ScannerModalProps) {
                 handleSimulateScan('text');
               }}
               style={[styles.scanButtonShadow, { backgroundColor: '#FDF6F2' }]}
-              className="flex-row items-center gap-2 px-5 py-3.5 rounded-full active:scale-95">
+              className="flex-row items-center gap-2 px-5 py-3.5 rounded-none active:scale-95">
               <Ionicons name="document-text-outline" size={18} color="#1A1416" />
               <Text className="text-ink font-bold text-xs tracking-wider">SCAN PLAIN TEXT</Text>
             </Pressable>
@@ -208,7 +208,7 @@ export function ScannerModal({ visible, onClose }: ScannerModalProps) {
                 handleSimulateScan('url');
               }}
               style={[styles.scanButtonShadow, { backgroundColor: Palette.plum }]}
-              className="flex-row items-center gap-2 px-5 py-3.5 rounded-full active:scale-95">
+              className="flex-row items-center gap-2 px-5 py-3.5 rounded-none active:scale-95">
               <Ionicons name="link-outline" size={18} color="#FFFFFF" />
               <Text className="text-white font-bold text-xs tracking-wider">SCAN URL</Text>
             </Pressable>

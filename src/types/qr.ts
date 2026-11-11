@@ -35,13 +35,19 @@ export type ModuleShape = 'square' | 'rounded' | 'dots';
 export type EyeStyle = 'square' | 'rounded' | 'circle';
 export type LogoPreset = 'none' | 'qrlab' | 'qrstudio' | 'star' | 'heart' | 'shield';
 
+export type QRCodeErrorCorrection = 'L' | 'M' | 'Q' | 'H';
+
 export interface CustomizationOptions {
   fgColor?: string;
-  bgColor: string;
-  moduleShape: ModuleShape;
-  eyeStyle: EyeStyle;
-  logo: LogoPreset;
-  padding: number;
+  bgColor?: string;
+  moduleShape?: ModuleShape;
+  eyeStyle?: EyeStyle;
+  logo?: LogoPreset;
+  logoPreset?: LogoPreset;
+  logoSize?: number;
+  quietZone?: number;
+  errorCorrection?: QRCodeErrorCorrection;
+  padding?: number;
 }
 
 export interface QRCodeRef {

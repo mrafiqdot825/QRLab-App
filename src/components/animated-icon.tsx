@@ -1,3 +1,5 @@
+import { useModals } from '@/hooks/use-modals';
+import { AppStorageService } from '@/services/storage/app-storage.service';
 import { Image } from 'expo-image';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect, useState } from 'react';
@@ -29,13 +31,31 @@ const splashKeyframe = new Keyframe({
 export function AnimatedSplashOverlay() {
   const [animate, setAnimate] = useState(false);
   const [visible, setVisible] = useState(true);
+  const { openFeatureDemo } = useModals();
 
   useEffect(() => {
+    let isMounted = true;
+
+    // Check first visit status and trigger interactive demo loading form if first launch
+    AppStorageService.getHasSeenFeatureDemo().then((hasSeen) => {
+      if (!hasSeen && isMounted) {
+        setTimeout(() => {
+          if (isMounted) {
+            openFeatureDemo(true);
+          }
+        }, 500);
+      }
+    });
+
     const timer = setTimeout(() => {
       setVisible(false);
     }, 1200);
-    return () => clearTimeout(timer);
-  }, []);
+
+    return () => {
+      isMounted = false;
+      clearTimeout(timer);
+    };
+  }, [openFeatureDemo]);
 
   if (!visible) return null;
 
@@ -135,7 +155,7 @@ const styles = StyleSheet.create({
   },
   background: {
     borderRadius: 40,
-    experimental_backgroundImage: `linear-gradient(135deg, #372EFF, #6B9DFF)`,
+    experimental_backgroundImage: `linear-gradient(135deg, #4A0F3A, #6A1B54)`,
     width: 128,
     height: 128,
     position: 'absolute',
@@ -146,7 +166,7 @@ const styles = StyleSheet.create({
   },
   splashOverlay: {
     ...StyleSheet.absoluteFill,
-    backgroundColor: '#372EFF',
+    backgroundColor: '#FBEDE6',
     alignItems: 'center',
     justifyContent: 'center',
     zIndex: 1000,

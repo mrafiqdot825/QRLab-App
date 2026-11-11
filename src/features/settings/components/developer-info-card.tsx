@@ -129,7 +129,7 @@ export const DeveloperInfoCard: React.FC = memo(() => {
               backgroundColor: 'rgba(74, 15, 58, 0.08)',
               borderColor: 'rgba(74, 15, 58, 0.18)',
             }}
-            className="flex-1 flex-row items-center justify-center gap-1.5 py-2.5 rounded-full border active:scale-95"
+            className="flex-1 flex-row items-center justify-center gap-1.5 py-2.5 rounded-none border active:scale-95"
           >
             <Ionicons name="mail-outline" size={14} color="#4A0F3A" />
             <Text className="text-plum text-xs font-bold">Support Email</Text>
@@ -145,7 +145,7 @@ export const DeveloperInfoCard: React.FC = memo(() => {
               backgroundColor: colors.surface,
               borderColor: colors.border,
             }}
-            className="flex-1 flex-row items-center justify-center gap-1.5 py-2.5 rounded-full border active:scale-95"
+            className="flex-1 flex-row items-center justify-center gap-1.5 py-2.5 rounded-none border active:scale-95"
           >
             <Ionicons
               name="globe-outline"

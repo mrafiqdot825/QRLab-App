@@ -1,3 +1,4 @@
+import { CustomColorPickerModal } from "@/components/custom-color-picker-modal";
 import { CustomStyledQRCode } from "@/components/ui/custom-styled-qr-code";
 import { GlassButton } from "@/components/ui/glass-button";
 import { GlassCard } from "@/components/ui/glass-card";
@@ -6,10 +7,19 @@ import { CinematicPresets, PresetId } from "@/constants/theme";
 import { Typography } from "@/constants/theme/typography";
 import { useTheme } from "@/hooks/use-theme";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
 import { useIsFocused, useRouter } from "expo-router";
-import React, { useEffect, useMemo, useState } from "react";
-import { Dimensions, Pressable, StyleSheet, Text, View } from "react-native";
+import React, { memo, useCallback, useEffect, useMemo, useState } from "react";
+import {
+  Dimensions,
+  Platform,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import Animated, {
   cancelAnimation,
   Easing,
@@ -37,18 +47,51 @@ const PRESET_QUICK_CHOICES: PresetId[] = [
   "luxury-gold",
   "sunset",
   "lavender",
+  "emerald-mint",
+  "cyber-violet",
+  "terracotta-fire",
 ];
 
-const PresetSwatchItem = React.memo(
+const isColorLight = (hex: string): boolean => {
+  const c = hex.replace('#', '');
+  if (c.length === 3) {
+    const r = parseInt(c[0] + c[0], 16);
+    const g = parseInt(c[1] + c[1], 16);
+    const b = parseInt(c[2] + c[2], 16);
+    return (r * 299 + g * 587 + b * 114) / 1000 > 175;
+  }
+  if (c.length === 6) {
+    const r = parseInt(c.slice(0, 2), 16);
+    const g = parseInt(c.slice(2, 4), 16);
+    const b = parseInt(c.slice(4, 6), 16);
+    return (r * 299 + g * 587 + b * 114) / 1000 > 175;
+  }
+  return false;
+};
+
+const QUICK_PALETTE_HUES = [
+  { color: "#FFFFFF", name: "Pure White" },
+  { color: "#4A0F3A", name: "Plum" },
+  { color: "#1A2A56", name: "Navy" },
+  { color: "#1B3B2B", name: "Forest" },
+  { color: "#059669", name: "Emerald" },
+  { color: "#2563EB", name: "Royal" },
+  { color: "#7C3AED", name: "Amethyst" },
+  { color: "#EA580C", name: "Flame" },
+  { color: "#DC2626", name: "Crimson" },
+  { color: "#D97706", name: "Amber" },
+  { color: "#1A1416", name: "Deep Ink" },
+  { color: "#000000", name: "Jet Black" },
+];
+
+const PresetSwatchItem = memo(
   ({
     presetId,
     isSelected,
-    colors,
     onSelect,
   }: {
     presetId: PresetId;
     isSelected: boolean;
-    colors: any;
     onSelect: (id: PresetId) => void;
   }) => {
     const preset = useMemo(
@@ -57,23 +100,31 @@ const PresetSwatchItem = React.memo(
     );
     if (!preset) return null;
 
-    const handlePress = () => onSelect(presetId);
+    const handlePress = useCallback(() => {
+      if (Platform.OS !== "web") {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+      }
+      onSelect(presetId);
+    }, [onSelect, presetId]);
 
     return (
       <Pressable
         onPress={handlePress}
+        hitSlop={{ top: 8, bottom: 8, left: 6, right: 6 }}
         accessibilityLabel={`Select ${preset.name} theme`}
         accessibilityRole="button"
+        style={({ pressed }) => ({
+          opacity: pressed ? 0.75 : 1,
+        })}
         className="items-center"
       >
         <View
           style={{
             backgroundColor: preset.accentColor,
-            borderColor: isSelected ? "#4A0F3A" : "transparent",
+            borderColor: isSelected ? "#380B2C" : "rgba(0,0,0,0.18)",
+            borderWidth: isSelected ? 2.5 : 1.5,
           }}
-          className={`w-7 h-7 rounded-full border-2 items-center justify-center ${
-            isSelected ? "opacity-100 scale-110" : "opacity-70"
-          }`}
+          className="w-7 h-7 rounded-none items-center justify-center"
         >
           {isSelected && (
             <Ionicons name="checkmark" size={13} color="#FFFFFF" />
@@ -85,33 +136,66 @@ const PresetSwatchItem = React.memo(
 );
 PresetSwatchItem.displayName = "PresetSwatchItem";
 
-export const HomeHeroCard: React.FC = React.memo(() => {
+export const HomeHeroCard: React.FC = memo(() => {
   const router = useRouter();
   const { colors } = useTheme();
   const [selectedPresetId, setSelectedPresetId] =
-    useState<PresetId>("plum-editorial");
+    useState<PresetId | null>("plum-editorial");
+  const [customColor, setCustomColor] = useState<string | null>(null);
+  const [showCustomPicker, setShowCustomPicker] = useState<boolean>(false);
 
-  const handleNavigateStudio = React.useCallback(
-    () => router.navigate("/studio"),
-    [router],
-  );
+  const handleNavigateStudio = useCallback(() => {
+    router.navigate({
+      pathname: "/studio",
+      params: {
+        ...(selectedPresetId ? { initialPreset: selectedPresetId } : {}),
+        ...(customColor ? { initialColor: customColor } : {}),
+      },
+    });
+  }, [router, selectedPresetId, customColor]);
 
-  const handleNavigateExplore = React.useCallback(
+  const handleNavigateExplore = useCallback(
     () => router.navigate("/explore"),
     [router],
   );
 
-  const handleSelectPreset = React.useCallback(
-    (id: PresetId) => setSelectedPresetId(id),
-    [],
-  );
+  const handleSelectPreset = useCallback((id: PresetId) => {
+    setSelectedPresetId(id);
+    setCustomColor(null);
+  }, []);
+
+  const handleSelectCustomColor = useCallback((color: string) => {
+    setCustomColor(color);
+    setSelectedPresetId(null);
+    if (Platform.OS !== "web") {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+    }
+  }, []);
+
+  const handleToggleCustomPicker = useCallback(() => {
+    setShowCustomPicker((prev) => !prev);
+    if (Platform.OS !== "web") {
+      Haptics.selectionAsync().catch(() => {});
+    }
+  }, []);
 
   const activePreset = useMemo(() => {
-    return (
-      CinematicPresets.find((p) => p.id === selectedPresetId) ??
-      CinematicPresets[0]
-    );
+    if (selectedPresetId) {
+      return (
+        CinematicPresets.find((p) => p.id === selectedPresetId) ??
+        CinematicPresets[0]
+      );
+    }
+    return CinematicPresets[0];
   }, [selectedPresetId]);
+
+  const effectiveColor = customColor ?? activePreset.qrColor;
+  const effectiveGlow = customColor
+    ? `${customColor}33`
+    : activePreset.glowColor || "rgba(74, 15, 58, 0.12)";
+  const styleTitle = customColor
+    ? "Custom Tint Style"
+    : `${activePreset.name} Style`;
 
   const glowPulse = useSharedValue(0.6);
   const isFocused = useIsFocused();
@@ -146,13 +230,13 @@ export const HomeHeroCard: React.FC = React.memo(() => {
       <CustomStyledQRCode
         value="https://qrlab.me/pro-studio"
         size={Math.min(width * 0.48, 190)}
-        color={activePreset.qrColor}
+        color={effectiveColor}
         backgroundColor="#FFFFFF"
         moduleShape="rounded"
         eyeStyle="rounded"
       />
     ),
-    [activePreset.qrColor],
+    [effectiveColor],
   );
 
   return (
@@ -231,6 +315,7 @@ export const HomeHeroCard: React.FC = React.memo(() => {
           ))}
         </View>
       </Animated.View>
+
       {/* Floating Interactive Live QR Card */}
       <Animated.View
         entering={FadeInUp.duration(600).delay(150).springify()}
@@ -243,7 +328,7 @@ export const HomeHeroCard: React.FC = React.memo(() => {
             pointerEvents="none"
           >
             <LinearGradient
-              colors={["rgba(247, 185, 165, 0.35)", "transparent"]}
+              colors={[effectiveGlow, "transparent"]}
               style={styles.heroGlowFill}
               start={{ x: 0.5, y: 0.5 }}
               end={{ x: 1, y: 1 }}
@@ -255,7 +340,7 @@ export const HomeHeroCard: React.FC = React.memo(() => {
             {/* QR Code Container with Active Preset Colors */}
             <View
               style={{
-                backgroundColor: activePreset.qrBg,
+                backgroundColor: "#FFFFFF",
                 borderColor: "rgba(74, 15, 58, 0.08)",
               }}
               className="p-5 rounded-[24px] mb-4 border items-center justify-center shadow-sm"
@@ -264,28 +349,78 @@ export const HomeHeroCard: React.FC = React.memo(() => {
             </View>
 
             <Text className="text-ink text-base font-bold text-center">
-              {activePreset.name} Style
+              {styleTitle}
             </Text>
             <Text className="text-ink-muted text-xs mt-0.5 text-center">
-              Tap a preset below to change look in real-time
+              Tap a preset below or pick a custom tint in real-time
             </Text>
 
             {/* Interactive Theme Swatch Bar */}
             <View
-              style={{ borderColor: "rgba(74, 15, 58, 0.06)" }}
-              className="flex-row items-center gap-2 mt-4 pt-3 border-t w-full justify-center"
+              style={{ borderColor: "rgba(74, 15, 58, 0.08)" }}
+              className="mt-4 pt-3 border-t w-full"
             >
-              {PRESET_QUICK_CHOICES.map((id) => (
-                <PresetSwatchItem
-                  key={id}
-                  presetId={id}
-                  isSelected={selectedPresetId === id}
-                  colors={colors}
-                  onSelect={handleSelectPreset}
-                />
-              ))}
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={{
+                  alignItems: "center",
+                  justifyContent: "center",
+                  flexGrow: 1,
+                  gap: 8,
+                  paddingHorizontal: 4,
+                }}
+              >
+                {PRESET_QUICK_CHOICES.map((id) => (
+                  <PresetSwatchItem
+                    key={id}
+                    presetId={id}
+                    isSelected={selectedPresetId === id}
+                    onSelect={handleSelectPreset}
+                  />
+                ))}
+
+                {/* Custom Color Picker Swatch Button */}
+                <Pressable
+                  onPress={handleToggleCustomPicker}
+                  hitSlop={{ top: 8, bottom: 8, left: 6, right: 6 }}
+                  accessibilityLabel="Toggle custom color palette"
+                  accessibilityRole="button"
+                  style={({ pressed }) => ({
+                    opacity: pressed ? 0.75 : 1,
+                  })}
+                  className="items-center"
+                >
+                  <LinearGradient
+                    colors={["#DC2626", "#EA580C", "#CA8A04", "#059669", "#2563EB", "#7C3AED"]}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                    style={{
+                      borderColor: customColor || showCustomPicker ? "#380B2C" : "rgba(0,0,0,0.18)",
+                      borderWidth: customColor || showCustomPicker ? 2.5 : 1.5,
+                    }}
+                    className="w-7 h-7 rounded-none items-center justify-center"
+                  >
+                    <Ionicons
+                      name={showCustomPicker ? "close" : "color-palette"}
+                      size={13}
+                      color="#FFFFFF"
+                    />
+                  </LinearGradient>
+                </Pressable>
+              </ScrollView>
             </View>
           </GlassCard>
+
+          {/* Custom Color Studio Modal with Live Interactive QR Code */}
+          <CustomColorPickerModal
+            visible={showCustomPicker}
+            onClose={() => setShowCustomPicker(false)}
+            selectedColor={effectiveColor}
+            onSelectColor={handleSelectCustomColor}
+            payloadValue="https://qrlab.me/pro-studio"
+            presetId={selectedPresetId || "plum-editorial"}
+          />
         </View>
       </Animated.View>
     </View>

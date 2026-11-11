@@ -156,6 +156,8 @@ export default function StudioScreen() {
               onSelectPreset={handleSelectPreset}
               selectedColor={customOpts.fgColor}
               onSelectColor={handleSelectColor}
+              payloadValue={deferredPayloadValue}
+              customOpts={customOpts}
             />
           </View>
         </ScrollView>

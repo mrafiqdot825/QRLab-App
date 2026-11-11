@@ -3,17 +3,15 @@ import { GlassCard } from '@/components/ui/glass-card';
 import { GlassModal } from '@/components/ui/glass-modal';
 import { Palette } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
-import { withAlpha } from '@/utils/color';
 import React, { memo, useState } from 'react';
-import { Pressable, ScrollView, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 
 export const PoliciesCard: React.FC = memo(() => {
   const { colors } = useTheme();
-  const [activePolicy, setActivePolicy] = useState<'privacy' | 'terms' | 'licenses' | null>(null);
+  const [activePolicy, setActivePolicy] = useState<'privacy' | 'terms' | null>(null);
 
   const openPrivacy = React.useCallback(() => setActivePolicy('privacy'), []);
   const openTerms = React.useCallback(() => setActivePolicy('terms'), []);
-  const openLicenses = React.useCallback(() => setActivePolicy('licenses'), []);
   const closeModal = React.useCallback(() => setActivePolicy(null), []);
 
   return (
@@ -31,7 +29,12 @@ export const PoliciesCard: React.FC = memo(() => {
           style={{ borderColor: colors.border }}
           className="flex-row items-center justify-between py-2.5 border-b active:opacity-70">
           <View className="flex-row items-center gap-3">
-            <View style={{ backgroundColor: 'rgba(201, 216, 190, 0.5)' }} className="w-9 h-9 rounded-2xl items-center justify-center">
+            <View
+              style={{
+                backgroundColor: 'rgba(201, 216, 190, 0.5)',
+                borderColor: 'rgba(74, 15, 58, 0.15)',
+              }}
+              className="w-9 h-9 rounded-none border items-center justify-center">
               <Ionicons name="shield-checkmark-outline" size={17} color={Palette.plum} />
             </View>
             <View>
@@ -39,7 +42,9 @@ export const PoliciesCard: React.FC = memo(() => {
               <Text className="text-on-surface-variant text-[11px]">Local storage, offline safety & camera privacy</Text>
             </View>
           </View>
-          <View style={{ backgroundColor: colors.surface, borderColor: colors.border }} className="w-7 h-7 rounded-full items-center justify-center border">
+          <View
+            style={{ backgroundColor: colors.surface, borderColor: colors.border }}
+            className="w-7 h-7 rounded-none items-center justify-center border">
             <Ionicons name="chevron-forward" size={14} color={Palette.plum} />
           </View>
         </Pressable>
@@ -49,10 +54,14 @@ export const PoliciesCard: React.FC = memo(() => {
           accessibilityLabel="Open Terms of Service"
           accessibilityRole="button"
           onPress={openTerms}
-          style={{ borderColor: colors.border }}
-          className="flex-row items-center justify-between py-2.5 border-b active:opacity-70">
+          className="flex-row items-center justify-between py-2.5 active:opacity-70">
           <View className="flex-row items-center gap-3">
-            <View style={{ backgroundColor: 'rgba(251, 233, 168, 0.55)' }} className="w-9 h-9 rounded-2xl items-center justify-center">
+            <View
+              style={{
+                backgroundColor: 'rgba(251, 233, 168, 0.55)',
+                borderColor: 'rgba(74, 15, 58, 0.15)',
+              }}
+              className="w-9 h-9 rounded-none border items-center justify-center">
               <Ionicons name="document-text-outline" size={17} color={Palette.plum} />
             </View>
             <View>
@@ -60,27 +69,9 @@ export const PoliciesCard: React.FC = memo(() => {
               <Text className="text-on-surface-variant text-[11px]">Usage rights, vector export & commercial rules</Text>
             </View>
           </View>
-          <View style={{ backgroundColor: colors.surface, borderColor: colors.border }} className="w-7 h-7 rounded-full items-center justify-center border">
-            <Ionicons name="chevron-forward" size={14} color={Palette.plum} />
-          </View>
-        </Pressable>
-
-        {/* OPEN SOURCE LICENSES ROW */}
-        <Pressable
-          accessibilityLabel="Open Software Licenses"
-          accessibilityRole="button"
-          onPress={openLicenses}
-          className="flex-row items-center justify-between py-2.5 active:opacity-70">
-          <View className="flex-row items-center gap-3">
-            <View style={{ backgroundColor: 'rgba(217, 212, 245, 0.5)' }} className="w-9 h-9 rounded-2xl items-center justify-center">
-              <Ionicons name="code-working-outline" size={17} color={Palette.plum} />
-            </View>
-            <View>
-              <Text className="text-on-surface font-bold text-sm">Software & Open Source Licenses</Text>
-              <Text className="text-on-surface-variant text-[11px]">Third-party libraries & MIT license attributions</Text>
-            </View>
-          </View>
-          <View style={{ backgroundColor: colors.surface, borderColor: colors.border }} className="w-7 h-7 rounded-full items-center justify-center border">
+          <View
+            style={{ backgroundColor: colors.surface, borderColor: colors.border }}
+            className="w-7 h-7 rounded-none items-center justify-center border">
             <Ionicons name="chevron-forward" size={14} color={Palette.plum} />
           </View>
         </Pressable>
@@ -90,15 +81,9 @@ export const PoliciesCard: React.FC = memo(() => {
       <GlassModal
         visible={!!activePolicy}
         onClose={closeModal}
-        title={
-          activePolicy === 'privacy'
-            ? 'Privacy Policy'
-            : activePolicy === 'terms'
-            ? 'Terms of Service'
-            : 'Software Licenses'
-        }
+        title={activePolicy === 'privacy' ? 'Privacy Policy' : 'Terms of Service'}
         variant="sheet">
-        <ScrollView className="max-h-[380px]" showsVerticalScrollIndicator={false}>
+        <View className="py-1">
           {activePolicy === 'privacy' && (
             <View className="gap-3 py-2">
               <Text className="text-on-surface text-sm font-bold">1. Zero Cloud Data Collection</Text>
@@ -131,23 +116,7 @@ export const PoliciesCard: React.FC = memo(() => {
               </Text>
             </View>
           )}
-
-          {activePolicy === 'licenses' && (
-            <View className="gap-3 py-2">
-              <Text className="text-on-surface text-sm font-bold">Open Source Attributions</Text>
-              <Text className="text-on-surface-variant text-xs leading-5">
-                QRLab is built using open-source libraries:
-              </Text>
-              <View style={{ backgroundColor: colors.glassSurfaceSubtle, borderColor: colors.border }} className="p-3 rounded-2xl gap-1 border">
-                <Text className="text-xs font-bold text-on-surface">• Expo SDK 57 (MIT License)</Text>
-                <Text className="text-xs font-bold text-on-surface">• React Native 0.86 (MIT License)</Text>
-                <Text className="text-xs font-bold text-on-surface">• React Native Reanimated 4 (MIT License)</Text>
-                <Text className="text-xs font-bold text-on-surface">• React Native SVG & QRCode SVG (MIT License)</Text>
-                <Text className="text-xs font-bold text-on-surface">• Expo Vector Icons & Ionicons (MIT License)</Text>
-              </View>
-            </View>
-          )}
-        </ScrollView>
+        </View>
       </GlassModal>
     </>
   );

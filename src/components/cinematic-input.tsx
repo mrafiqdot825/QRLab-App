@@ -129,7 +129,7 @@ export const CinematicInput = React.memo(function CinematicInput({
                     openInDefaultTextEditor(value);
                   }}
                   style={{ backgroundColor: '#FDF6F2', borderColor: 'rgba(74, 15, 58, 0.08)' }}
-                  className="flex-row items-center gap-1.5 px-3 py-1.5 rounded-full border active:scale-95">
+                  className="flex-row items-center gap-1.5 px-3 py-1.5 rounded-none border active:scale-95">
                   <Ionicons name="open-outline" size={14} color="#1A1416" />
                   <Text className="text-ink text-xs font-bold">Open in Editor</Text>
                 </Pressable>
@@ -139,7 +139,7 @@ export const CinematicInput = React.memo(function CinematicInput({
                   accessibilityRole="button"
                   onPress={openEditor}
                   style={{ backgroundColor: 'rgba(74, 15, 58, 0.08)', borderColor: 'rgba(74, 15, 58, 0.15)' }}
-                  className="flex-row items-center gap-1.5 px-3 py-1.5 rounded-full border active:scale-95">
+                  className="flex-row items-center gap-1.5 px-3 py-1.5 rounded-none border active:scale-95">
                   <Ionicons name="expand-outline" size={14} color="#4A0F3A" />
                   <Text className="text-plum text-xs font-bold">Expand</Text>
                 </Pressable>

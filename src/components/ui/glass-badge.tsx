@@ -35,7 +35,7 @@ export const GlassBadge = React.memo(function GlassBadge({
   return (
     <View
       style={{ backgroundColor: badgeConfig.bg, borderColor: badgeConfig.border }}
-      className={`self-start flex-row items-center gap-1.5 px-3 py-1 rounded-full border overflow-hidden relative ${className}`}>
+      className={`self-start flex-row items-center gap-1.5 px-3 py-1 rounded-none border overflow-hidden relative ${className}`}>
       {icon && <Ionicons name={icon} size={12} color={badgeConfig.text} />}
 
       <Text className="font-bold text-[10px] tracking-wider uppercase" style={{ color: badgeConfig.text }}>

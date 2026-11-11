@@ -5,15 +5,17 @@ import { TopBar } from '@/components/morrow/top-bar';
 import { Palette } from '@/constants/theme';
 import { DeveloperInfoCard } from '@/features/settings/components/developer-info-card';
 import { PoliciesCard } from '@/features/settings/components/policies-card';
+import { useModals } from '@/hooks/use-modals';
 import { useTheme } from '@/hooks/use-theme';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import * as Haptics from 'expo-haptics';
 import React, { useState } from 'react';
-import { Platform, ScrollView, Switch, Text, View } from 'react-native';
+import { Platform, Pressable, ScrollView, Switch, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function SettingsScreen() {
   const { colors } = useTheme();
+  const { openFeatureDemo } = useModals();
 
   const [hapticsEnabled, setHapticsEnabled] = useState(true);
   const [highQualityExports, setHighQualityExports] = useState(true);
@@ -63,7 +65,7 @@ export default function SettingsScreen() {
 
               <View className="flex-row items-center justify-between py-1">
                 <View className="flex-row items-center gap-3">
-                  <View style={{ backgroundColor: 'rgba(217, 212, 245, 0.45)' }} className="w-9 h-9 rounded-2xl items-center justify-center">
+                  <View style={{ backgroundColor: 'rgba(217, 212, 245, 0.45)', borderColor: 'rgba(74, 15, 58, 0.15)' }} className="w-9 h-9 rounded-none border items-center justify-center">
                     <Ionicons name="phone-portrait-outline" size={17} color={Palette.plum} />
                   </View>
                   <View>
@@ -82,7 +84,7 @@ export default function SettingsScreen() {
 
               <View style={{ borderColor: colors.border }} className="flex-row items-center justify-between py-1 border-t">
                 <View className="flex-row items-center gap-3">
-                  <View style={{ backgroundColor: 'rgba(201, 216, 190, 0.45)' }} className="w-9 h-9 rounded-2xl items-center justify-center">
+                  <View style={{ backgroundColor: 'rgba(201, 216, 190, 0.45)', borderColor: 'rgba(74, 15, 58, 0.15)' }} className="w-9 h-9 rounded-none border items-center justify-center">
                     <Ionicons name="sparkles-outline" size={17} color={Palette.plum} />
                   </View>
                   <View>
@@ -98,6 +100,27 @@ export default function SettingsScreen() {
                   thumbColor="#FFFFFF"
                 />
               </View>
+
+              {/* REPLAY INTERACTIVE FEATURE DEMO TOUR */}
+              <Pressable
+                accessibilityLabel="Replay Interactive Feature Demo"
+                accessibilityRole="button"
+                onPress={() => openFeatureDemo(false)}
+                style={{ borderColor: colors.border }}
+                className="flex-row items-center justify-between py-1 border-t active:opacity-70">
+                <View className="flex-row items-center gap-3">
+                  <View style={{ backgroundColor: 'rgba(247, 185, 165, 0.45)', borderColor: 'rgba(74, 15, 58, 0.15)' }} className="w-9 h-9 rounded-none border items-center justify-center">
+                    <Ionicons name="play-circle-outline" size={17} color={Palette.plum} />
+                  </View>
+                  <View>
+                    <Text className="text-on-surface font-bold text-sm">Interactive Feature Demo</Text>
+                    <Text className="text-on-surface-variant text-[11px]">Replay first-visit feature walkthrough</Text>
+                  </View>
+                </View>
+                <View style={{ backgroundColor: colors.surface, borderColor: colors.border }} className="w-7 h-7 rounded-none items-center justify-center border">
+                  <Ionicons name="chevron-forward" size={14} color={Palette.plum} />
+                </View>
+              </Pressable>
             </GlassCard>
 
             {/* POLICIES & LEGAL GOVERNANCE */}

@@ -1,4 +1,5 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { useRouter } from 'expo-router';
 import React, { useCallback, useMemo, useState } from 'react';
 import {
   Dimensions,
@@ -14,8 +15,11 @@ import { Palette } from '@/constants/theme';
 
 interface LiquidGlassTabBarProps {
   state: any;
-  descriptors: any;
-  navigation: any;
+  descriptors?: any;
+  navigation?: any;
+  emitter?: any;
+  navigateToTab?: (key: string) => void;
+  insets?: any;
 }
 
 const NAV_PURPLE = Palette.plum;
@@ -170,7 +174,14 @@ function CenterWebCreateButton({
   );
 }
 
-export function LiquidGlassTabBar({ state, descriptors: _descriptors, navigation }: LiquidGlassTabBarProps) {
+export function LiquidGlassTabBar({
+  state,
+  descriptors,
+  navigation,
+  emitter,
+  navigateToTab,
+}: LiquidGlassTabBarProps) {
+  const router = useRouter();
   const [containerWidth, setContainerWidth] = useState(() => {
     if (typeof window !== 'undefined') {
       return Math.min(window.innerWidth - 32, 440);
@@ -190,17 +201,24 @@ export function LiquidGlassTabBar({ state, descriptors: _descriptors, navigation
 
   const handleTabPress = useCallback(
     (route: any, isFocused: boolean) => {
-      const event = navigation.emit({
+      const nav = navigation || descriptors?.[route.key]?.navigation;
+      const event = (emitter || nav)?.emit?.({
         type: 'tabPress',
         target: route.key,
         canPreventDefault: true,
       });
 
-      if (!isFocused && !event.defaultPrevented) {
-        navigation.navigate(route.name);
+      if (!isFocused && !event?.defaultPrevented) {
+        if (typeof navigateToTab === 'function') {
+          navigateToTab(route.key);
+        } else if (nav?.navigate) {
+          nav.navigate(route.name);
+        } else {
+          router.navigate(route.name === 'index' ? '/' : `/${route.name}` as any);
+        }
       }
     },
-    [navigation]
+    [navigation, descriptors, emitter, navigateToTab, router]
   );
 
   const pathD = useMemo(() => getPathData(containerWidth), [containerWidth]);

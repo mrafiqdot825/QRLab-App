@@ -136,7 +136,7 @@ export const PlainTextEditorModal = React.memo(function PlainTextEditorModal({
                   accessibilityLabel="Copy text"
                   accessibilityRole="button"
                   onPress={handleCopy}
-                  className="flex-row items-center gap-1 px-2.5 py-1 rounded-full bg-accent/10 active:opacity-70">
+                  className="flex-row items-center gap-1 px-2.5 py-1 rounded-none bg-accent/10 active:opacity-70">
                   <Ionicons name="copy-outline" size={14} color={colors.accent} />
                   <Text className="text-accent font-semibold text-xs">Copy</Text>
                 </Pressable>
@@ -146,7 +146,7 @@ export const PlainTextEditorModal = React.memo(function PlainTextEditorModal({
                   accessibilityLabel="Clear text"
                   accessibilityRole="button"
                   onPress={handleClear}
-                  className="flex-row items-center gap-1 px-2.5 py-1 rounded-full bg-red-500/10 active:opacity-70">
+                  className="flex-row items-center gap-1 px-2.5 py-1 rounded-none bg-red-500/10 active:opacity-70">
                   <Ionicons name="trash-outline" size={14} color="#EF4444" />
                   <Text className="text-red-400 font-semibold text-xs">Clear</Text>
                 </Pressable>

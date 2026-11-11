@@ -20,7 +20,7 @@ export const CinematicPresets = [
     gradient: ['#FDF6F2', '#EAF0FC', '#AFC0F5'] as const,
     qrColor: '#1A2A56',
     qrBg: '#FFFFFF',
-    accentColor: '#4A0F3A',
+    accentColor: '#2563EB',
     glowColor: 'rgba(175, 192, 245, 0.15)',
   },
   {
@@ -56,7 +56,7 @@ export const CinematicPresets = [
     gradient: ['#FFFFFF', '#F5F3FC', '#D9D4F5'] as const,
     qrColor: '#2D1B4E',
     qrBg: '#FFFFFF',
-    accentColor: '#4A0F3A',
+    accentColor: '#8B5CF6',
     glowColor: 'rgba(217, 212, 245, 0.15)',
   },
   {
@@ -67,6 +67,33 @@ export const CinematicPresets = [
     qrBg: '#FFFFFF',
     accentColor: '#1A1416',
     glowColor: 'rgba(26, 20, 22, 0.08)',
+  },
+  {
+    id: 'emerald-mint',
+    name: 'Emerald Luxe',
+    gradient: ['#FFFFFF', '#ECFDF5', '#A7F3D0'] as const,
+    qrColor: '#065F46',
+    qrBg: '#FFFFFF',
+    accentColor: '#059669',
+    glowColor: 'rgba(5, 150, 105, 0.15)',
+  },
+  {
+    id: 'cyber-violet',
+    name: 'Electric Amethyst',
+    gradient: ['#FFFFFF', '#F5F3FF', '#DDD6FE'] as const,
+    qrColor: '#5B21B6',
+    qrBg: '#FFFFFF',
+    accentColor: '#7C3AED',
+    glowColor: 'rgba(124, 58, 237, 0.15)',
+  },
+  {
+    id: 'terracotta-fire',
+    name: 'Terracotta Flame',
+    gradient: ['#FFFFFF', '#FFF7ED', '#FED7AA'] as const,
+    qrColor: '#9A3412',
+    qrBg: '#FFFFFF',
+    accentColor: '#EA580C',
+    glowColor: 'rgba(234, 88, 12, 0.15)',
   },
 ];
 

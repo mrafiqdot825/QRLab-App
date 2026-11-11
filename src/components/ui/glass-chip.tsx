@@ -60,7 +60,7 @@ export const GlassChip = React.memo(function GlassChip({
   };
 
   return (
-    <Animated.View className={`rounded-full ${className}`} style={[animatedStyle, style]}>
+    <Animated.View className={`rounded-none ${className}`} style={[animatedStyle, style]}>
       <Pressable
         onPress={handlePress}
         onPressIn={handlePressIn}
@@ -78,7 +78,7 @@ export const GlassChip = React.memo(function GlassChip({
                 boxShadow: '0px 2px 6px rgba(74, 15, 58, 0.04)',
               }
         }
-        className="px-4 py-2.5 rounded-full flex-row items-center justify-center gap-1.5 overflow-hidden relative border"
+        className="px-4 py-2.5 rounded-none flex-row items-center justify-center gap-1.5 overflow-hidden relative border"
       >
         {icon && (
           <Ionicons

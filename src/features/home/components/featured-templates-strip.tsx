@@ -69,7 +69,7 @@ const FeaturedTemplateItem = React.memo(
               backgroundColor: '#FDF6F2',
               borderColor: 'rgba(74, 15, 58, 0.08)',
             }}
-            className="flex-row items-center justify-center gap-1.5 mt-4 py-2.5 rounded-full border overflow-hidden relative"
+            className="flex-row items-center justify-center gap-1.5 mt-4 py-2.5 rounded-none border overflow-hidden relative"
           >
             <Text className="text-ink text-xs font-bold">
               Use Template

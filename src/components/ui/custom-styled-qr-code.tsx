@@ -268,7 +268,34 @@ export const CustomStyledQRCode: React.FC<CustomStyledQRCodeProps> = React.memo(
           </G>
         );
       }
-      return null;
+
+      // Official QRLab brand emblem vector geometry:
+      // 3 corner finder eye boxes + creative dot matrix in 4th quadrant
+      return (
+        <G transform={`translate(${logoX + iconOffset}, ${logoY + iconOffset}) scale(${iconScale})`}>
+          {/* Top-left finder eye */}
+          <Rect x="2" y="2" width="8" height="8" rx="1.8" fill={color} />
+          <Rect x="4" y="4" width="4" height="4" rx="0.8" fill={logoBackgroundColor || '#FFFFFF'} />
+          <Rect x="5" y="5" width="2" height="2" rx="0.4" fill={color} />
+
+          {/* Top-right finder eye */}
+          <Rect x="14" y="2" width="8" height="8" rx="1.8" fill={color} />
+          <Rect x="16" y="4" width="4" height="4" rx="0.8" fill={logoBackgroundColor || '#FFFFFF'} />
+          <Rect x="17" y="5" width="2" height="2" rx="0.4" fill={color} />
+
+          {/* Bottom-left finder eye */}
+          <Rect x="2" y="14" width="8" height="8" rx="1.8" fill={color} />
+          <Rect x="4" y="16" width="4" height="4" rx="0.8" fill={logoBackgroundColor || '#FFFFFF'} />
+          <Rect x="5" y="17" width="2" height="2" rx="0.4" fill={color} />
+
+          {/* Bottom-right modern data dots cluster */}
+          <Rect x="14" y="14" width="3.2" height="3.2" rx="0.8" fill={color} />
+          <Rect x="18.8" y="14" width="3.2" height="3.2" rx="0.8" fill={color} />
+          <Rect x="14" y="18.8" width="3.2" height="3.2" rx="0.8" fill={color} />
+          <Rect x="18.8" y="18.8" width="3.2" height="3.2" rx="0.8" fill={color} />
+          <Rect x="16.4" y="16.4" width="3.2" height="3.2" rx="0.6" fill={color} />
+        </G>
+      );
     };
 
     return (
@@ -281,6 +308,9 @@ export const CustomStyledQRCode: React.FC<CustomStyledQRCodeProps> = React.memo(
           rx={logoRadius}
           ry={logoRadius}
           fill={logoBackgroundColor}
+          stroke={color}
+          strokeWidth={1}
+          strokeOpacity={0.18}
         />
         {logo ? (
           <Image

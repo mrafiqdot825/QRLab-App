@@ -1,5 +1,6 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import * as Haptics from 'expo-haptics';
+import { useRouter } from 'expo-router';
 import React, { useCallback, useMemo, useState } from 'react';
 import {
   Dimensions,
@@ -22,8 +23,11 @@ import { Palette, SpringConfigs } from '@/constants/theme';
 
 interface LiquidGlassTabBarProps {
   state: any;
-  descriptors: any;
-  navigation: any;
+  descriptors?: any;
+  navigation?: any;
+  emitter?: any;
+  navigateToTab?: (key: string) => void;
+  insets?: any;
 }
 
 const NAV_PURPLE = Palette.plum;
@@ -204,7 +208,14 @@ function CenterCreateButton({
   );
 }
 
-export function LiquidGlassTabBar({ state, descriptors: _descriptors, navigation }: LiquidGlassTabBarProps) {
+export function LiquidGlassTabBar({
+  state,
+  descriptors,
+  navigation,
+  emitter,
+  navigateToTab,
+}: LiquidGlassTabBarProps) {
+  const router = useRouter();
   const insets = useSafeAreaInsets();
   const [containerWidth, setContainerWidth] = useState(() => {
     const screenW = Dimensions.get('window').width;
@@ -226,17 +237,25 @@ export function LiquidGlassTabBar({ state, descriptors: _descriptors, navigation
       if (Platform.OS !== 'web') {
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
       }
-      const event = navigation.emit({
+
+      const nav = navigation || descriptors?.[route.key]?.navigation;
+      const event = (emitter || nav)?.emit?.({
         type: 'tabPress',
         target: route.key,
         canPreventDefault: true,
       });
 
-      if (!isFocused && !event.defaultPrevented) {
-        navigation.navigate(route.name);
+      if (!isFocused && !event?.defaultPrevented) {
+        if (typeof navigateToTab === 'function') {
+          navigateToTab(route.key);
+        } else if (nav?.navigate) {
+          nav.navigate(route.name);
+        } else {
+          router.navigate(route.name === 'index' ? '/' : `/${route.name}` as any);
+        }
       }
     },
-    [navigation]
+    [navigation, descriptors, emitter, navigateToTab, router]
   );
 
   const bottomInset = Math.max(insets.bottom, Platform.OS === 'ios' ? 16 : 14);

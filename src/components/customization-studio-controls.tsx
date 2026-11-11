@@ -85,13 +85,13 @@ export const CustomizationStudioControls = React.memo(function CustomizationStud
           Center Brand Badge
         </Text>
         <View className="flex-row gap-2 w-full flex-wrap sm:flex-nowrap">
-          {(['none', 'qrlab', 'shield', 'star'] as const).map((logoItem) => (
+          {(['none', 'qrlab', 'shield', 'star', 'heart'] as const).map((logoItem) => (
             <GlassChip
               key={logoItem}
-              label={logoItem.toUpperCase()}
+              label={logoItem === 'none' ? 'NONE' : logoItem === 'qrlab' ? 'QRLAB' : logoItem.toUpperCase()}
               selected={currentLogo === logoItem || (logoItem === 'qrlab' && currentLogo === 'qrstudio')}
               onPress={() => updateOption('logo', logoItem as any)}
-              style={{ flex: 1, minWidth: 65 }}
+              style={{ flex: 1, minWidth: 60 }}
               className="flex-1 justify-center"
             />
           ))}

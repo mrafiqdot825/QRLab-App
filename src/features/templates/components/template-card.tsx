@@ -73,7 +73,7 @@ export const TemplateCard: React.FC<TemplateCardProps> = memo(
           iconPosition="right"
           variant="secondary"
           onPress={handlePress}
-          className="rounded-full py-3"
+          className="rounded-none py-3"
         />
       </GlassCard>
     );

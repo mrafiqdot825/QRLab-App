@@ -169,7 +169,7 @@ export default function InboxScreen() {
                     backgroundColor: colors.surface,
                     borderColor: colors.border,
                   }}
-                  className="px-4 py-1.5 rounded-full border active:opacity-70 shadow-sm"
+                  className="px-4 py-1.5 rounded-none border active:opacity-70 shadow-sm"
                 >
                   <Text className="text-plum text-xs font-bold">
                     Mark all as read
@@ -201,7 +201,7 @@ export default function InboxScreen() {
                     borderColor:
                       filterMode === "all" ? colors.border : "transparent",
                   }}
-                  className="px-3 py-1 rounded-full border"
+                  className="px-3 py-1 rounded-none border"
                 >
                   <Text
                     style={{
@@ -226,7 +226,7 @@ export default function InboxScreen() {
                     borderColor:
                       filterMode === "unread" ? colors.border : "transparent",
                   }}
-                  className="px-3 py-1 rounded-full border"
+                  className="px-3 py-1 rounded-none border"
                 >
                   <Text
                     style={{

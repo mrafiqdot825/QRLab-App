@@ -147,7 +147,7 @@ export const QRStage3D = React.memo(function QRStage3D({
               accessibilityRole="button"
               onPress={handleFlip}
               style={{ backgroundColor: '#FDF6F2', borderColor: 'rgba(74, 15, 58, 0.08)', borderWidth: 1 }}
-              className="flex-row items-center gap-1 px-3 py-1.5 rounded-full overflow-hidden relative active:opacity-70"
+              className="flex-row items-center gap-1 px-3 py-1.5 rounded-none overflow-hidden relative active:opacity-70"
             >
               <Ionicons
                 name="sync-outline"
@@ -214,7 +214,7 @@ export const QRStage3D = React.memo(function QRStage3D({
               accessibilityRole="button"
               onPress={handleFlip}
               style={{ backgroundColor: colors.secondaryBackground, borderColor: colors.border, borderWidth: 1 }}
-              className="flex-row items-center gap-1 px-3 py-1.5 rounded-full overflow-hidden relative active:opacity-70"
+              className="flex-row items-center gap-1 px-3 py-1.5 rounded-none overflow-hidden relative active:opacity-70"
             >
               <Ionicons
                 name="sync-outline"

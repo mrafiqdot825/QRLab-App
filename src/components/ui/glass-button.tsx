@@ -11,6 +11,7 @@ interface GlassButtonProps extends ViewProps {
   children?: React.ReactNode;
   title?: string;
   variant?: 'primary' | 'secondary' | 'ghost' | 'glass';
+  size?: 'sm' | 'md' | 'lg';
   icon?: keyof typeof Ionicons.glyphMap;
   iconPosition?: 'left' | 'right';
   onPress?: () => void;
@@ -22,6 +23,7 @@ export const GlassButton = React.memo(function GlassButton({
   children,
   title,
   variant = 'primary',
+  size = 'md',
   icon,
   iconPosition = 'left',
   onPress,
@@ -68,6 +70,13 @@ export const GlassButton = React.memo(function GlassButton({
 
   const iconColor = isPrimary ? '#FFFFFF' : colors.primaryText;
 
+  const sizeStyles =
+    size === 'sm'
+      ? { paddingVertical: 8, paddingHorizontal: 12 }
+      : size === 'lg'
+      ? { paddingVertical: 16, paddingHorizontal: 22 }
+      : { paddingVertical: 12, paddingHorizontal: 18 };
+
   const surfaceStyle = isPrimary
     ? {
         backgroundColor: disabled ? colors.disabledBg : Palette.plum,
@@ -87,14 +96,14 @@ export const GlassButton = React.memo(function GlassButton({
     : undefined;
 
   return (
-    <Animated.View className={`rounded-full ${className}`} style={[animatedStyle, style]}>
+    <Animated.View className={`rounded-none ${className}`} style={[animatedStyle, style]}>
       <Pressable
         onPress={handlePress}
         onPressIn={handlePressIn}
         onPressOut={handlePressOut}
         disabled={disabled}
-        style={surfaceStyle}
-        className={`px-6 py-3.5 rounded-full flex-row items-center justify-center gap-2 relative overflow-hidden ${
+        style={[surfaceStyle, sizeStyles]}
+        className={`rounded-none flex-row items-center justify-center gap-2 relative overflow-hidden ${
           isPrimary
             ? ''
             : isSecondary || isGlass

@@ -11,14 +11,28 @@ import * as SplashScreen from 'expo-splash-screen';
 import React from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { configureReanimatedLogger, ReanimatedLogLevel } from 'react-native-reanimated';
-
-
+import { LogBox } from 'react-native';
 
 // Configure Reanimated Logger per official documentation to disable strict mode reading/writing value warnings
 configureReanimatedLogger({
   level: ReanimatedLogLevel.warn,
   strict: false,
 });
+
+// Suppress React Native 0.88 deprecation warning triggered by third-party CSS interop libraries
+LogBox.ignoreLogs([
+  'ImageBackground is deprecated',
+]);
+
+if (__DEV__) {
+  const originalWarn = console.warn;
+  console.warn = (...args: any[]) => {
+    if (typeof args[0] === 'string' && args[0].includes('ImageBackground is deprecated')) {
+      return;
+    }
+    originalWarn(...args);
+  };
+}
 
 SplashScreen.preventAutoHideAsync();
 
