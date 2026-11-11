@@ -98,7 +98,6 @@ const PresetSwatchItem = memo(
       () => CinematicPresets.find((p) => p.id === presetId),
       [presetId],
     );
-    if (!preset) return null;
 
     const handlePress = useCallback(() => {
       if (Platform.OS !== "web") {
@@ -106,6 +105,8 @@ const PresetSwatchItem = memo(
       }
       onSelect(presetId);
     }, [onSelect, presetId]);
+
+    if (!preset) return null;
 
     return (
       <Pressable
