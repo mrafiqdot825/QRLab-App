@@ -6,9 +6,8 @@ export interface QRTemplate {
   title: string;
   desc: string;
   type: QRType;
-  icon: string;
-  gradient: [string, string];
-  color: string;
+  /** Dark tint used for the template's preview code. */
+  qrColor: string;
   sampleValue: string;
 }
 
@@ -24,6 +23,11 @@ export const TEMPLATE_CATEGORIES: string[] = [
   'Social',
 ];
 
+/** Display name for a category id. */
+export function categoryLabel(category: string): string {
+  return category === 'WiFi' ? 'Wi‑Fi' : category;
+}
+
 export const TEMPLATES_LIST: QRTemplate[] = [
   {
     id: '1',
@@ -31,9 +35,7 @@ export const TEMPLATES_LIST: QRTemplate[] = [
     title: 'Executive Digital Card',
     desc: 'Share contact information, company details, and phone number instantly.',
     type: 'vcard',
-    icon: 'briefcase-outline',
-    gradient: ['#EFF6FF', '#DBEAFE'],
-    color: '#2563EB',
+    qrColor: '#1A2A56',
     sampleValue: 'BEGIN:VCARD\nN:Alex Morgan\nORG:Liquid Studio\nEND:VCARD',
   },
   {
@@ -42,9 +44,7 @@ export const TEMPLATES_LIST: QRTemplate[] = [
     title: 'Digital Menu Portal',
     desc: 'Instant QR menu for tables and bar counters with zero contact.',
     type: 'url',
-    icon: 'restaurant-outline',
-    gradient: ['#FFF7ED', '#FFEDD5'],
-    color: '#F59E0B',
+    qrColor: '#111114',
     sampleValue: 'https://qrlab.me/menu-demo',
   },
   {
@@ -53,9 +53,7 @@ export const TEMPLATES_LIST: QRTemplate[] = [
     title: 'Design Showcase Link',
     desc: 'Direct clients to your Behance, Dribbble, or GitHub portfolio.',
     type: 'url',
-    icon: 'code-slash-outline',
-    gradient: ['#F5F3FF', '#EDE9FE'],
-    color: '#7C3AED',
+    qrColor: '#3B2A8F',
     sampleValue: 'https://qrlab.me/portfolio',
   },
   {
@@ -64,9 +62,7 @@ export const TEMPLATES_LIST: QRTemplate[] = [
     title: 'Interactive CV',
     desc: 'Attach your PDF resume and LinkedIn profile to physical prints.',
     type: 'url',
-    icon: 'document-text-outline',
-    gradient: ['#F8FAFC', '#E2E8F0'],
-    color: '#475569',
+    qrColor: '#3A3F47',
     sampleValue: 'https://qrlab.me/cv-alex',
   },
   {
@@ -75,9 +71,7 @@ export const TEMPLATES_LIST: QRTemplate[] = [
     title: 'VIP Pass & RSVP',
     desc: 'Scan code for event entry ticket, location coordinates, and time.',
     type: 'text',
-    icon: 'calendar-outline',
-    gradient: ['#FEF2F2', '#FEE2E2'],
-    color: '#EF4444',
+    qrColor: '#4A1810',
     sampleValue: 'EVENT: VIP Design Summit 2026',
   },
   {
@@ -86,9 +80,7 @@ export const TEMPLATES_LIST: QRTemplate[] = [
     title: 'Cafe Guest Network',
     desc: 'One-tap zero typing guest Wi-Fi access for customers.',
     type: 'wifi',
-    icon: 'wifi-outline',
-    gradient: ['#ECFDF5', '#D1FAE5'],
-    color: '#10B981',
+    qrColor: '#0B5E3C',
     sampleValue: 'WIFI:S:CafeGuest_5G;T:WPA;P:Welcome2026!;;',
   },
   {
@@ -97,9 +89,7 @@ export const TEMPLATES_LIST: QRTemplate[] = [
     title: 'Quick Checkout Pay',
     desc: 'Accept instant customer payments via PayPal, Venmo, or UPI.',
     type: 'url',
-    icon: 'wallet-outline',
-    gradient: ['#F0FDF4', '#BBF7D0'],
-    color: '#16A34A',
+    qrColor: '#14532D',
     sampleValue: 'https://qrlab.me/pay-checkout',
   },
   {
@@ -108,9 +98,7 @@ export const TEMPLATES_LIST: QRTemplate[] = [
     title: 'Multi-Link Hub',
     desc: 'Connect all social channels into one QR code landing page.',
     type: 'url',
-    icon: 'share-social-outline',
-    gradient: ['#FAF5FF', '#E9D5FF'],
-    color: '#9333EA',
+    qrColor: '#4C1D95',
     sampleValue: 'https://qrlab.me/socials-all',
   },
 ];

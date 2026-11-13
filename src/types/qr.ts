@@ -1,7 +1,3 @@
-import { PresetId } from '@/constants/theme';
-
-export type { PresetId };
-
 export type QRType = 'url' | 'text' | 'wifi' | 'vcard' | 'email' | 'phone';
 
 

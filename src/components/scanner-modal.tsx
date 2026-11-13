@@ -1,20 +1,22 @@
-import { useRouter } from 'expo-router';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import * as Haptics from 'expo-haptics';
-import React, { useEffect, useState } from 'react';
-import { Alert, Modal, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
+import * as Clipboard from 'expo-clipboard';
+import { useRouter } from 'expo-router';
+import React, { useCallback, useEffect, useState } from 'react';
+import { Linking, Modal, Pressable, StyleSheet, View } from 'react-native';
 import Animated, {
   cancelAnimation,
+  FadeInDown,
   useAnimatedStyle,
   useSharedValue,
   withRepeat,
-  withSequence,
   withTiming,
 } from 'react-native-reanimated';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { GlassBadge } from '@/components/ui/glass-badge';
-import { Palette, Shadows } from '@/constants/theme';
-import { useTheme } from '@/hooks/use-theme';
+import { AppText } from '@/components/ds/app-text';
+import { Button, IconButton } from '@/components/ds/controls';
+import { C, PAD } from '@/constants/design';
+import { haptic } from '@/services/preferences';
 import { openInDefaultTextEditor } from '@/utils/qr-exporter';
 
 interface ScannerModalProps {
@@ -22,205 +24,312 @@ interface ScannerModalProps {
   onClose: () => void;
 }
 
+type ScanResult = { kind: 'url' | 'text'; value: string };
+
+const SAMPLE_TEXT =
+  'Important Plain Text Note:\nScanned directly from QRLab Camera Scanner!\n\nUse this mobile text editor to modify or re-generate your QR code.';
+const SAMPLE_URL = 'https://qrlab.me/demo-scanned-access';
+
+const FRAME = 248;
+
 export function ScannerModal({ visible, onClose }: ScannerModalProps) {
   const router = useRouter();
-  const { colors, shadows } = useTheme();
+  const insets = useSafeAreaInsets();
   const [torch, setTorch] = useState(false);
-  const [scanType, setScanType] = useState<'text' | 'url'>('text');
-  const scanLineY = useSharedValue(0);
+  const [result, setResult] = useState<ScanResult | null>(null);
+  const [copied, setCopied] = useState(false);
+  const lineY = useSharedValue(0);
 
   useEffect(() => {
-    if (visible) {
-      scanLineY.value = withRepeat(
-        withSequence(
-          withTiming(200, { duration: 2000 }),
-          withTiming(0, { duration: 2000 })
-        ),
-        -1,
-        true
-      );
+    if (visible && !result) {
+      lineY.value = 0;
+      lineY.value = withRepeat(withTiming(FRAME - 40, { duration: 2000 }), -1, true);
     } else {
-      cancelAnimation(scanLineY);
+      cancelAnimation(lineY);
     }
-    return () => cancelAnimation(scanLineY);
-  }, [visible, scanLineY]);
+    return () => cancelAnimation(lineY);
+  }, [visible, result, lineY]);
 
-  const animatedScanLine = useAnimatedStyle(() => ({
-    transform: [{ translateY: scanLineY.value }],
-  }));
+  const lineStyle = useAnimatedStyle(() => ({ transform: [{ translateY: lineY.value }] }));
 
-  const handleSimulateScan = (typeOverride?: 'text' | 'url') => {
-    if (Platform.OS !== 'web') {
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
-    }
+  const scan = useCallback((kind: ScanResult['kind']) => {
+    haptic('success');
+    setCopied(false);
+    setResult({ kind, value: kind === 'url' ? SAMPLE_URL : SAMPLE_TEXT });
+  }, []);
 
-    const currentType = typeOverride || scanType;
-    const scannedCode =
-      currentType === 'text'
-        ? 'Important Plain Text Note:\nScanned directly from QRLab Camera Scanner!\n\nUse this mobile text editor to modify or re-generate your QR code.'
-        : 'https://qrlab.me/demo-scanned-access';
+  const close = useCallback(() => {
+    haptic('light');
+    setResult(null);
+    onClose();
+  }, [onClose]);
 
-    if (currentType === 'text') {
-      Alert.alert(
-        'Plain Text QR Code Scanned!',
-        `Scanned Text:\n"${scannedCode}"`,
-        [
-          {
-            text: 'Open in Phone Default Editor',
-            style: 'default',
-            onPress: async () => {
-              onClose();
-              await openInDefaultTextEditor(scannedCode);
-            },
-          },
-          {
-            text: 'Open in App Text Editor',
-            onPress: () => {
-              onClose();
-              router.navigate({
-                pathname: '/studio',
-                params: {
-                  initialType: 'text',
-                  initialValue: scannedCode,
-                },
-              });
-            },
-          },
-          {
-            text: 'Copy Text',
-            onPress: () => {
-              if (typeof navigator !== 'undefined' && navigator.clipboard) {
-                navigator.clipboard.writeText(scannedCode).catch(() => {});
-              }
-              onClose();
-            },
-          },
-          { text: 'Cancel', style: 'cancel', onPress: onClose },
-        ]
-      );
+  const editInCreate = useCallback(() => {
+    if (!result) return;
+    setResult(null);
+    onClose();
+    router.navigate({
+      pathname: '/studio',
+      params: { initialType: result.kind, initialValue: result.value },
+    });
+  }, [result, onClose, router]);
+
+  const openResult = useCallback(async () => {
+    if (!result) return;
+    haptic('light');
+    if (result.kind === 'url') {
+      await Linking.openURL(result.value).catch(() => {});
     } else {
-      Alert.alert(
-        'URL QR Code Scanned!',
-        `Payload: ${scannedCode}`,
-        [
-          {
-            text: 'Open in Studio',
-            onPress: () => {
-              onClose();
-              router.navigate({
-                pathname: '/studio',
-                params: {
-                  initialType: 'url',
-                  initialValue: scannedCode,
-                },
-              });
-            },
-          },
-          { text: 'Done', onPress: onClose },
-        ]
-      );
+      await openInDefaultTextEditor(result.value);
     }
-  };
+  }, [result]);
+
+  const copy = useCallback(async () => {
+    if (!result) return;
+    await Clipboard.setStringAsync(result.value).catch(() => {});
+    haptic('success');
+    setCopied(true);
+  }, [result]);
 
   if (!visible) return null;
 
+  const isUrl = result?.kind === 'url';
+
   return (
-    <Modal visible={visible} animationType="slide" transparent={false} onRequestClose={onClose}>
-      <View className="flex-1 bg-black justify-between p-6 relative">
-        {/* TOP FLOATING GLASS CONTROL BAR */}
-        <View className="flex-row items-center justify-between pt-12 z-50">
-          <Pressable
-            accessibilityLabel="Close scanner"
-            accessibilityRole="button"
-            onPress={() => {
-              if (Platform.OS !== 'web') {
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
-              }
-              onClose();
-            }}
-            className="w-11 h-11 rounded-full items-center justify-center bg-white/20 border border-white/30 active:scale-95">
-            <Ionicons name="close" size={22} color="#FFFFFF" />
-          </Pressable>
-
-          <GlassBadge label="CAMERA SCANNER ACTIVE" variant="primary" />
-
-          <Pressable
-            accessibilityLabel={torch ? 'Turn off torch' : 'Turn on torch'}
-            accessibilityRole="button"
-            onPress={() => {
-              setTorch(!torch);
-              if (Platform.OS !== 'web') {
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
-              }
-            }}
-            className={`w-11 h-11 rounded-full items-center justify-center border ${
-              torch ? 'bg-amber-400 border-amber-300' : 'bg-white/20 border-white/30'
-            }`}>
-            <Ionicons name={torch ? 'flash' : 'flash-outline'} size={20} color={torch ? '#000000' : '#FFFFFF'} />
-          </Pressable>
+    <Modal visible animationType="slide" statusBarTranslucent navigationBarTranslucent onRequestClose={close}>
+      <View style={styles.root}>
+        {/* Viewfinder */}
+        <View style={styles.finderWrap} pointerEvents="none">
+          <View style={styles.frame}>
+            <View style={[styles.corner, styles.tl]} />
+            <View style={[styles.corner, styles.tr]} />
+            <View style={[styles.corner, styles.bl]} />
+            <View style={[styles.corner, styles.br]} />
+            {!result ? <Animated.View style={[styles.scanLine, lineStyle]} /> : null}
+            {result ? (
+              <View style={styles.found}>
+                <Ionicons name="checkmark" size={30} color={C.white} />
+              </View>
+            ) : null}
+          </View>
+          <AppText size={14} color="rgba(255,255,255,0.78)" align="center" style={styles.hint}>
+            {result ? 'Code found' : 'Point at a QR code. It scans on its own.'}
+          </AppText>
         </View>
 
-        {/* SCANNING TARGET FRAME WITH GLASS SCAN LINE */}
-        <View className="self-center items-center justify-center relative">
-          <View className="w-64 h-64 rounded-[28px] border-2 border-white/30 overflow-hidden relative justify-center items-center bg-white/5">
-            {/* CORNER BRACKETS */}
-            <View style={{ borderColor: '#F7B9A5' }} className="absolute top-3 left-3 w-6 h-6 border-t-4 border-l-4 rounded-tl-xl" />
-            <View style={{ borderColor: '#F7B9A5' }} className="absolute top-3 right-3 w-6 h-6 border-t-4 border-r-4 rounded-tr-xl" />
-            <View style={{ borderColor: '#F7B9A5' }} className="absolute bottom-3 left-3 w-6 h-6 border-b-4 border-l-4 rounded-bl-xl" />
-            <View style={{ borderColor: '#F7B9A5' }} className="absolute bottom-3 right-3 w-6 h-6 border-b-4 border-r-4 rounded-br-xl" />
+        {/* Top bar */}
+        <View style={[styles.top, { top: insets.top + 12 }]}>
+          <IconButton icon="close" label="Close scanner" variant="block" onPress={close} />
+          <AppText weight="semibold" size={17} color={C.white} accessibilityRole="header">
+            Scan a code
+          </AppText>
+          <IconButton
+            icon={torch ? 'flash' : 'flash-outline'}
+            label={torch ? 'Turn off torch' : 'Turn on torch'}
+            variant="block"
+            color={torch ? C.ink : C.white}
+            style={torch ? styles.torchOn : undefined}
+            onPress={() => {
+              haptic('medium');
+              setTorch((t) => !t);
+            }}
+          />
+        </View>
 
-            {/* ANIMATED SCAN LINE */}
+        {/* Bottom */}
+        <View style={[styles.bottom, { paddingBottom: Math.max(insets.bottom, 16) + 12 }]}>
+          {result ? (
             <Animated.View
-              style={[
-                shadows.glowBlue,
-                animatedScanLine,
-                { position: 'absolute', top: 20, left: 10, right: 10, height: 3, backgroundColor: '#F7B9A5', borderRadius: 2 },
-              ]}
-            />
-          </View>
-
-          <Text className="text-white/80 font-medium text-xs text-center mt-6 tracking-wide">
-            Position QR code inside the frame to scan automatically
-          </Text>
-        </View>
-
-        {/* BOTTOM ACTION BAR */}
-        <View className="pb-8 items-center gap-3 w-full">
-          <View className="flex-row items-center justify-center gap-3">
-            <Pressable
-              accessibilityLabel="Scan Plain Text Code"
-              accessibilityRole="button"
-              onPress={() => {
-                setScanType('text');
-                handleSimulateScan('text');
-              }}
-              style={[styles.scanButtonShadow, { backgroundColor: '#FDF6F2' }]}
-              className="flex-row items-center gap-2 px-5 py-3.5 rounded-full active:scale-95">
-              <Ionicons name="document-text-outline" size={18} color="#1A1416" />
-              <Text className="text-ink font-bold text-xs tracking-wider">SCAN PLAIN TEXT</Text>
-            </Pressable>
-
-            <Pressable
-              accessibilityLabel="Scan URL Code"
-              accessibilityRole="button"
-              onPress={() => {
-                setScanType('url');
-                handleSimulateScan('url');
-              }}
-              style={[styles.scanButtonShadow, { backgroundColor: Palette.plum }]}
-              className="flex-row items-center gap-2 px-5 py-3.5 rounded-full active:scale-95">
-              <Ionicons name="link-outline" size={18} color="#FFFFFF" />
-              <Text className="text-white font-bold text-xs tracking-wider">SCAN URL</Text>
-            </Pressable>
-          </View>
+              entering={FadeInDown.duration(200)}
+              style={styles.card}
+              aria-live="polite">
+              <View style={styles.cardHead}>
+                <View style={styles.cardIcon}>
+                  <Ionicons name={isUrl ? 'link' : 'text'} size={20} color={C.okText} />
+                </View>
+                <View style={styles.cardText}>
+                  <AppText weight="semibold" size={12.5} color={C.okText}>
+                    {isUrl ? 'Link found' : 'Text found'}
+                  </AppText>
+                  <AppText weight="bold" size={16} tracking={-0.2} numberOfLines={2}>
+                    {isUrl ? result.value.replace(/^https?:\/\//, '') : result.value.replace(/\s+/g, ' ')}
+                  </AppText>
+                </View>
+                <IconButton
+                  icon={copied ? 'checkmark' : 'copy-outline'}
+                  label={copied ? 'Copied' : 'Copy'}
+                  iconSize={19}
+                  onPress={copy}
+                />
+              </View>
+              <View style={styles.cardActions}>
+                <Button
+                  title="Edit in Create"
+                  icon="create-outline"
+                  variant="secondary"
+                  onPress={editInCreate}
+                  style={styles.flex}
+                />
+                <Button
+                  title={isUrl ? 'Open link' : 'Open in editor'}
+                  icon="open-outline"
+                  onPress={openResult}
+                  style={styles.flex}
+                />
+              </View>
+              <Pressable onPress={() => setResult(null)} accessibilityRole="button" style={styles.again}>
+                <AppText weight="semibold" size={14} color={C.muted}>
+                  Scan another
+                </AppText>
+              </Pressable>
+            </Animated.View>
+          ) : (
+            <View style={styles.samples}>
+              <Button
+                title="Scan text"
+                icon="text-outline"
+                variant="white"
+                onPress={() => scan('text')}
+                style={styles.flex}
+              />
+              <Button
+                title="Scan link"
+                icon="link-outline"
+                variant="white"
+                onPress={() => scan('url')}
+                style={styles.flex}
+              />
+            </View>
+          )}
         </View>
       </View>
     </Modal>
   );
 }
 
+const CORNER = 40;
+const BORDER = 4;
+
 const styles = StyleSheet.create({
-  scanButtonShadow: {
-    boxShadow: '0px 6px 20px rgba(62, 111, 166, 0.3)',
+  root: {
+    flex: 1,
+    backgroundColor: '#0B0B0C',
+  },
+  finderWrap: {
+    ...StyleSheet.absoluteFill,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingBottom: 80,
+  },
+  frame: {
+    width: FRAME,
+    height: FRAME,
+    borderRadius: 28,
+    backgroundColor: 'rgba(255,255,255,0.04)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  corner: {
+    position: 'absolute',
+    width: CORNER,
+    height: CORNER,
+    borderColor: C.white,
+  },
+  tl: { top: -2, left: -2, borderTopWidth: BORDER, borderLeftWidth: BORDER, borderTopLeftRadius: 30 },
+  tr: { top: -2, right: -2, borderTopWidth: BORDER, borderRightWidth: BORDER, borderTopRightRadius: 30 },
+  bl: {
+    bottom: -2,
+    left: -2,
+    borderBottomWidth: BORDER,
+    borderLeftWidth: BORDER,
+    borderBottomLeftRadius: 30,
+  },
+  br: {
+    bottom: -2,
+    right: -2,
+    borderBottomWidth: BORDER,
+    borderRightWidth: BORDER,
+    borderBottomRightRadius: 30,
+  },
+  scanLine: {
+    position: 'absolute',
+    top: 20,
+    left: 18,
+    right: 18,
+    height: 2,
+    borderRadius: 1,
+    backgroundColor: 'rgba(255,255,255,0.85)',
+  },
+  found: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    backgroundColor: C.okDot,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  hint: {
+    marginTop: 24,
+    paddingHorizontal: PAD,
+  },
+  top: {
+    position: 'absolute',
+    left: PAD,
+    right: PAD,
+    height: 44,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  torchOn: {
+    backgroundColor: '#FCD34D',
+  },
+  bottom: {
+    position: 'absolute',
+    left: 12,
+    right: 12,
+    bottom: 0,
+  },
+  samples: {
+    flexDirection: 'row',
+    gap: 10,
+    paddingHorizontal: PAD - 12,
+  },
+  card: {
+    padding: 16,
+    paddingBottom: 6,
+    borderRadius: 24,
+    backgroundColor: C.white,
+  },
+  cardHead: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  cardIcon: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: C.okBg,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  cardText: {
+    flex: 1,
+    minWidth: 0,
+    gap: 2,
+  },
+  cardActions: {
+    marginTop: 14,
+    flexDirection: 'row',
+    gap: 10,
+  },
+  again: {
+    height: 44,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  flex: {
+    flex: 1,
   },
 });

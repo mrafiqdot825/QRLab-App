@@ -268,6 +268,17 @@ export const CustomStyledQRCode: React.FC<CustomStyledQRCodeProps> = React.memo(
           </G>
         );
       }
+      if (logoPreset === 'qrlab' || logoPreset === 'qrstudio') {
+        // Same mark the SVG exporter draws, so preview and export match.
+        return (
+          <G transform={`translate(${logoX + iconOffset}, ${logoY + iconOffset}) scale(${iconScale})`}>
+            <Path
+              d="M3 3h8v8H3V3zm2 2v4h4V5H5zm8-2h8v8h-8V3zm2 2v4h4V5h-4zM3 13h8v8H3v-8zm2 2v4h4v-4H5zm13-2h3v3h-3v-3zm0 5h3v3h-3v-3zm-5-5h3v8h-3v-8z"
+              fill={color}
+            />
+          </G>
+        );
+      }
       return null;
     };
 

@@ -1,176 +1,247 @@
-import { HeroHeaderBlock } from "@/components/morrow/hero-header-block";
-import { TopBar } from "@/components/morrow/top-bar";
-import { ActionButtons3D } from "@/components/action-buttons-3d";
-import { CinematicInput } from "@/components/cinematic-input";
-import { CustomizationStudioControls } from "@/components/customization-studio-controls";
-import { ExportModal } from "@/components/export-modal";
-import { QRStage3D } from "@/components/qr-stage-3d";
-import { QRTypeSelector } from "@/components/qr-type-selector";
-import { ThemePresetsBar } from "@/components/theme-presets-bar";
-import { GlassContainer } from "@/components/ui/glass-container";
-import { useQRGenerator } from "@/hooks/use-qr-generator";
-import { CinematicPresets, PresetId } from "@/constants/theme";
-import { QRType } from "@/types/qr";
-import { useLocalSearchParams, useRouter } from "expo-router";
-import React, { useCallback, useMemo, useState } from "react";
-import { Platform, ScrollView, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { useLocalSearchParams } from 'expo-router';
+import React, { useCallback, useMemo, useState } from 'react';
+import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 
-export default function StudioScreen() {
-  const router = useRouter();
+import { AppText } from '@/components/ds/app-text';
+import { Button, IconButton } from '@/components/ds/controls';
+import { Toast, useToast } from '@/components/ds/toast';
+import { StatusScrim, TopBlock, useHeaderTop } from '@/components/ds/top-block';
+import { ExportSheet } from '@/components/export-sheet';
+import { C, CTA_BAR_HEIGHT, PAD, QR_COLORS } from '@/constants/design';
+import { isQRType, QR_TYPE_LABEL } from '@/constants/qr-types';
+import { PreviewCard } from '@/features/create/components/preview-card';
+import { QRForm } from '@/features/create/components/qr-form';
+import { StyleControls } from '@/features/create/components/style-controls';
+import { TypePills } from '@/features/create/components/type-pills';
+import { useKeyboardVisible } from '@/hooks/use-keyboard-visible';
+import { useQRGenerator } from '@/hooks/use-qr-generator';
+import { haptic } from '@/services/preferences';
+import { QRType } from '@/types/qr';
+import { displayPayload } from '@/utils/links';
+import { saveToFile } from '@/utils/qr-exporter';
+
+/** Types with several fields get a compact preview so the form stays in view. */
+const MULTI_FIELD: QRType[] = ['wifi', 'vcard'];
+
+const SHAPE_LABEL = { square: 'Square', rounded: 'Rounded', dots: 'Dots' } as const;
+
+export default function CreateScreen() {
   const params = useLocalSearchParams<{ initialType?: string; initialValue?: string }>();
-  const initialType = (params.initialType as QRType) || "url";
-  const initialValue = params.initialValue;
+  const initialType: QRType = isQRType(params.initialType) ? params.initialType : 'url';
 
   const {
     selectedType,
     setSelectedType,
-    presetId,
-    setPresetId,
     customOpts,
     setCustomOpts,
     payloadValue,
     deferredPayloadValue,
     qrRef,
     handleClearInputs,
-    formFields,
-  } = useQRGenerator({ initialType, initialValue });
+    formFields: f,
+  } = useQRGenerator({ initialType, initialValue: params.initialValue });
 
+  const headerTop = useHeaderTop();
+  const keyboardOpen = useKeyboardVisible();
+  const { message: toastMessage, show: showToast, hide: hideToast } = useToast();
   const [exportOpen, setExportOpen] = useState(false);
-  const openExport = useCallback(() => setExportOpen(true), []);
+  const [saving, setSaving] = useState(false);
+  const [enlarged, setEnlarged] = useState(false);
+
+  const multiField = MULTI_FIELD.includes(selectedType);
+  const compact = multiField && !enlarged;
+
+  // Caption text for the preview and export summary.
+  const { title, subtitle } = useMemo(() => {
+    switch (selectedType) {
+      case 'wifi':
+        return {
+          title: f.wifiSSID,
+          subtitle: `Wi‑Fi · ${f.wifiEnc === 'nopass' ? 'No password' : f.wifiEnc}`,
+        };
+      case 'vcard':
+        return { title: f.vName, subtitle: f.vOrg || f.vPhone || 'Contact' };
+      case 'text':
+        return { title: f.text.split('\n')[0], subtitle: 'Text' };
+      case 'email':
+        return { title: f.emailTo, subtitle: f.emailSubject || 'Email' };
+      case 'phone':
+        return { title: f.phoneNum, subtitle: 'Phone' };
+      default:
+        return { title: displayPayload(f.url), subtitle: 'Link' };
+    }
+  }, [selectedType, f]);
+
+  const hasContent = useMemo(() => {
+    switch (selectedType) {
+      case 'wifi':
+        return !!f.wifiSSID.trim();
+      case 'vcard':
+        return !!f.vName.trim();
+      default:
+        return !!displayPayload(payloadValue);
+    }
+  }, [selectedType, f.wifiSSID, f.vName, payloadValue]);
+
+  const summary = useMemo(() => {
+    const colour = QR_COLORS.find((c) => c.value.toLowerCase() === (customOpts.fgColor ?? '').toLowerCase());
+    return [QR_TYPE_LABEL[selectedType], SHAPE_LABEL[customOpts.moduleShape], colour?.label]
+      .filter(Boolean)
+      .join(' · ');
+  }, [selectedType, customOpts.moduleShape, customOpts.fgColor]);
+
+  const handleType = useCallback(
+    (type: QRType) => {
+      haptic('light');
+      setSelectedType(type);
+    },
+    [setSelectedType]
+  );
+
+  const handleClear = useCallback(() => {
+    haptic('medium');
+    handleClearInputs();
+  }, [handleClearInputs]);
+
+  const toggleSize = useCallback(() => setEnlarged((v) => !v), []);
+  const openExport = useCallback(() => {
+    haptic('light');
+    setExportOpen(true);
+  }, []);
   const closeExport = useCallback(() => setExportOpen(false), []);
 
-  const effectiveQrColor = useMemo(() => {
-    if (customOpts.fgColor) return customOpts.fgColor;
-    const preset = CinematicPresets.find((p) => p.id === presetId);
-    return preset?.qrColor || '#4A0F3A';
-  }, [customOpts.fgColor, presetId]);
+  const handleDownload = useCallback(async () => {
+    haptic('medium');
+    setSaving(true);
+    try {
+      const res = await saveToFile(qrRef as React.RefObject<any>, {
+        payloadValue,
+        fgColor: customOpts.fgColor ?? C.ink,
+        bgColor: customOpts.bgColor || '#FFFFFF',
+        moduleShape: customOpts.moduleShape,
+        eyeStyle: customOpts.eyeStyle,
+        logo: customOpts.logo,
+      });
+      showToast(res.message, res.success);
+    } finally {
+      setSaving(false);
+    }
+  }, [qrRef, payloadValue, customOpts, showToast]);
 
-  const handleSelectPreset = useCallback(
-    (id: PresetId) => {
-      setPresetId(id);
-      const found = CinematicPresets.find((p) => p.id === id);
-      setCustomOpts((prev) => ({ ...prev, fgColor: found?.qrColor }));
-    },
-    [setPresetId, setCustomOpts]
-  );
-
-  const handleSelectColor = useCallback(
-    (color: string) => setCustomOpts((prev) => ({ ...prev, fgColor: color })),
-    [setCustomOpts]
-  );
-
-  const handleOpenSettings = useCallback(() => {
-    router.navigate("/settings");
-  }, [router]);
+  const showCta = !keyboardOpen;
 
   return (
-    <GlassContainer>
-      <SafeAreaView className="flex-1">
-        <ScrollView
-          className="flex-1"
-          contentContainerStyle={{
-            alignItems: "center",
-            paddingHorizontal: 20,
-            paddingTop: 8,
-            paddingBottom: 130,
-          }}
-          showsVerticalScrollIndicator={false}
-          keyboardShouldPersistTaps="handled"
-          scrollEventThrottle={16}
-          removeClippedSubviews={Platform.OS !== "web"}
-          overScrollMode="never"
-        >
-          <View className="w-full max-w-[640px]">
-            {/* Top Bar */}
-            <TopBar
-              title="QRLab"
-              actionIcon="person-outline"
-              onPressAction={handleOpenSettings}
-            />
+    <View style={styles.screen}>
+      <StatusScrim />
+      <ScrollView
+        contentContainerStyle={[
+          styles.content,
+          { paddingTop: headerTop, paddingBottom: CTA_BAR_HEIGHT + 28 },
+        ]}
+        keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="on-drag"
+        automaticallyAdjustKeyboardInsets
+        showsVerticalScrollIndicator={false}>
+        <TopBlock below={compact ? 164 : 180} />
 
-            {/* Header Section */}
-            <HeroHeaderBlock
-              eyebrow="Studio workspace"
-              headlineLine1="Design &"
-              headlineLine2="customize."
-              subtitle="Configure data payloads and customize live visual styles."
-              showBotanical={true}
-            />
-            {/* Type selector pills */}
-            <QRTypeSelector
-              selectedType={selectedType}
-              onSelectType={setSelectedType}
-              variant="pills"
-            />
-            {/* Form Input Card */}
-            <CinematicInput
-              type={selectedType}
-              value={selectedType === "text" ? formFields.text : formFields.url}
-              onChangeValue={
-                selectedType === "text" ? formFields.setText : formFields.setUrl
-              }
-              wifiSSID={formFields.wifiSSID}
-              setWifiSSID={formFields.setWifiSSID}
-              wifiPass={formFields.wifiPass}
-              setWifiPass={formFields.setWifiPass}
-              wifiEnc={formFields.wifiEnc}
-              setWifiEnc={formFields.setWifiEnc}
-              vName={formFields.vName}
-              setVName={formFields.setVName}
-              vPhone={formFields.vPhone}
-              setVPhone={formFields.setVPhone}
-              vEmail={formFields.vEmail}
-              setVEmail={formFields.setVEmail}
-              vOrg={formFields.vOrg}
-              setVOrg={formFields.setVOrg}
-              emailTo={formFields.emailTo}
-              setEmailTo={formFields.setEmailTo}
-              emailSubject={formFields.emailSubject}
-              setEmailSubject={formFields.setEmailSubject}
-              phoneNum={formFields.phoneNum}
-              setPhoneNum={formFields.setPhoneNum}
-              onClear={handleClearInputs}
-            />
-            {/* Live 3D Stage Hero */}
-            <QRStage3D
-              value={deferredPayloadValue}
-              presetId={presetId}
-              qrRef={qrRef}
-              typeLabel={selectedType}
-              title="Live QR Preview"
-              fgColor={effectiveQrColor}
-              options={customOpts}
-              onExport={openExport}
-            />
-            {/* Action Buttons */}
-            <ActionButtons3D onOpenExport={openExport} />
-            {/* Workspace Customization Studio */}
-            <CustomizationStudioControls
-              options={customOpts}
-              onChangeOptions={setCustomOpts}
-            />
-            {/* Theme Presets & Color Picker */}
-            <ThemePresetsBar
-              selectedPresetId={presetId}
-              onSelectPreset={handleSelectPreset}
-              selectedColor={customOpts.fgColor}
-              onSelectColor={handleSelectColor}
-            />
-          </View>
-        </ScrollView>
-        {/* EXPORT MODAL */}
-        <ExportModal
-          visible={exportOpen}
-          onClose={closeExport}
-          payloadValue={payloadValue}
-          qrRef={qrRef}
-          presetId={presetId}
-          typeLabel={selectedType}
-          fgColor={effectiveQrColor}
+        <View style={styles.header}>
+          <AppText weight="bold" size={26} color={C.white} tracking={-0.8} accessibilityRole="header">
+            Create
+          </AppText>
+          <Pressable onPress={handleClear} accessibilityRole="button" hitSlop={8} style={styles.clear}>
+            <AppText weight="semibold" size={14} color={C.onBlockMuted}>
+              Clear
+            </AppText>
+          </Pressable>
+        </View>
+
+        <TypePills value={selectedType} onChange={handleType} />
+
+        <PreviewCard
+          value={deferredPayloadValue}
           options={customOpts}
+          qrRef={qrRef}
+          title={title}
+          subtitle={subtitle}
+          scannable={hasContent}
+          compact={compact}
+          onToggleSize={multiField ? toggleSize : undefined}
+          accessibilityLabel={`QR code preview for ${QR_TYPE_LABEL[selectedType]}${title ? `: ${title}` : ''}`}
         />
-      </SafeAreaView>
-    </GlassContainer>
+
+        <QRForm type={selectedType} fields={f} />
+
+        <StyleControls options={customOpts} onChange={setCustomOpts} />
+      </ScrollView>
+
+      {showCta ? (
+        <View style={styles.cta}>
+          <IconButton
+            icon="share-outline"
+            label="More export options"
+            variant="square"
+            size={48}
+            onPress={openExport}
+          />
+          <Button
+            title="Download PNG"
+            icon="download-outline"
+            loading={saving}
+            onPress={handleDownload}
+            style={styles.ctaPrimary}
+          />
+        </View>
+      ) : null}
+
+      <Toast message={toastMessage} onHide={hideToast} bottom={CTA_BAR_HEIGHT + 12} />
+
+      <ExportSheet
+        visible={exportOpen}
+        onClose={closeExport}
+        payloadValue={payloadValue}
+        qrRef={qrRef}
+        options={customOpts}
+        title={title}
+        summary={summary}
+      />
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  screen: {
+    flex: 1,
+    backgroundColor: C.white,
+  },
+  content: {
+    paddingHorizontal: PAD,
+  },
+  header: {
+    height: 44,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  clear: {
+    height: 44,
+    justifyContent: 'center',
+    paddingHorizontal: 4,
+  },
+  cta: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
+    height: CTA_BAR_HEIGHT,
+    paddingHorizontal: PAD,
+    paddingVertical: 12,
+    backgroundColor: C.white,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: C.border,
+    flexDirection: 'row',
+    gap: 10,
+  },
+  ctaPrimary: {
+    flex: 1,
+  },
+});

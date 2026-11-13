@@ -41,7 +41,7 @@ export class ErrorBoundary extends Component<Props, State> {
           <View style={styles.card}>
             <Text style={styles.title}>Something went wrong</Text>
             <Text style={styles.subtitle}>
-              An unexpected error occurred in the application visual stage.
+              QRLab hit an unexpected error. Please try again.
             </Text>
             {this.state.error?.message ? (
               <Text style={styles.errorText} numberOfLines={3}>
@@ -53,7 +53,7 @@ export class ErrorBoundary extends Component<Props, State> {
               onPress={this.handleReset}
               accessibilityLabel="Try again"
               accessibilityRole="button">
-              <Text style={styles.buttonText}>Try Again</Text>
+              <Text style={styles.buttonText}>Try again</Text>
             </Pressable>
           </View>
         </View>
@@ -70,7 +70,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     padding: 24,
-    backgroundColor: '#F0F8FF',
+    backgroundColor: '#F3F3F5',
   },
   card: {
     width: '100%',
@@ -79,7 +79,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     backgroundColor: '#FFFFFF',
     borderWidth: 1,
-    borderColor: '#D6E4F0',
+    borderColor: '#E6E6E9',
     boxShadow: '0px 8px 24px rgba(30, 42, 56, 0.08)',
     elevation: 4,
     alignItems: 'center',
@@ -87,12 +87,12 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     fontWeight: '800',
-    color: '#1E2A38',
+    color: '#111114',
     marginBottom: 8,
   },
   subtitle: {
     fontSize: 14,
-    color: '#5C6B7A',
+    color: '#6B6B73',
     textAlign: 'center',
     marginBottom: 16,
   },
@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   button: {
-    backgroundColor: '#3E6FA6',
+    backgroundColor: '#111114',
     paddingHorizontal: 24,
     paddingVertical: 12,
     borderRadius: 16,

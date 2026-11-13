@@ -1,21 +1,12 @@
-import Ionicons from '@expo/vector-icons/Ionicons';
-import * as Haptics from 'expo-haptics';
+import * as Clipboard from 'expo-clipboard';
 import React, { useCallback, useMemo } from 'react';
-import {
-  KeyboardAvoidingView,
-  Modal,
-  Platform,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from 'react-native';
+import { KeyboardAvoidingView, Modal, Platform, Pressable, StyleSheet, TextInput, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { GlassBadge } from '@/components/ui/glass-badge';
-import { GlassButton } from '@/components/ui/glass-button';
-import { useTheme } from '@/hooks/use-theme';
+import { AppText } from '@/components/ds/app-text';
+import { Button, IconButton } from '@/components/ds/controls';
+import { C, FONT, PAD } from '@/constants/design';
+import { haptic } from '@/services/preferences';
 import { openInDefaultTextEditor } from '@/utils/qr-exporter';
 
 interface PlainTextEditorModalProps {
@@ -25,173 +16,157 @@ interface PlainTextEditorModalProps {
   onChangeValue: (text: string) => void;
 }
 
+/** Full-height editor for long plain-text codes. */
 export const PlainTextEditorModal = React.memo(function PlainTextEditorModal({
   visible,
   onClose,
   value,
   onChangeValue,
 }: PlainTextEditorModalProps) {
-  const { colors, shadows } = useTheme();
+  const insets = useSafeAreaInsets();
 
-  const charCount = value ? value.length : 0;
-  const wordCount = useMemo(() => {
-    if (!value || !value.trim()) return 0;
-    return value.trim().split(/\s+/).length;
-  }, [value]);
-
-  const lineCount = useMemo(() => {
-    if (!value) return 0;
-    return value.split('\n').length;
+  const stats = useMemo(() => {
+    const chars = value?.length ?? 0;
+    const words = value?.trim() ? value.trim().split(/\s+/).length : 0;
+    const lines = value ? value.split('\n').length : 0;
+    return `${chars} characters · ${words} words · ${lines} lines`;
   }, [value]);
 
   const handleClear = useCallback(() => {
-    if (Platform.OS !== 'web') {
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
-    }
+    haptic('medium');
     onChangeValue('');
   }, [onChangeValue]);
 
-  const handleCopy = useCallback(() => {
-    if (Platform.OS !== 'web') {
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
-    }
-    if (typeof navigator !== 'undefined' && navigator.clipboard && value) {
-      navigator.clipboard.writeText(value).catch(() => {});
-    }
+  const handleCopy = useCallback(async () => {
+    if (!value) return;
+    await Clipboard.setStringAsync(value).catch(() => {});
+    haptic('success');
   }, [value]);
 
   const handleOpenPhoneEditor = useCallback(async () => {
-    if (Platform.OS !== 'web') {
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
-    }
+    haptic('medium');
     await openInDefaultTextEditor(value);
   }, [value]);
 
   if (!visible) return null;
 
   return (
-    <Modal visible={visible} animationType="slide" transparent onRequestClose={onClose}>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        className="flex-1 justify-end items-center bg-black/40 relative">
-        <Pressable
-          accessibilityLabel="Backdrop"
-          accessibilityRole="button"
-          onPress={onClose}
-          className="absolute inset-0 bg-black/40"
-        />
-
-        <View
-          style={[
-            shadows.modal,
-            {
-              backgroundColor: colors.surface,
-              borderColor: colors.border,
-              borderWidth: 1,
-            },
-          ]}
-          className="w-full max-w-[640px] h-[85%] rounded-t-3xl overflow-hidden relative flex-col">
-          {/* Sheet Handle */}
-          <View style={{ backgroundColor: colors.border }} className="w-12 h-1.5 rounded-full self-center mt-3 mb-1" />
-
-          {/* Header */}
-          <View
-            style={{ borderColor: colors.border }}
-            className="flex-row items-center justify-between px-6 py-4 border-b">
-            <View className="flex-row items-center gap-2">
-              <Ionicons name="document-text-outline" size={22} color={colors.accent} />
-              <Text className="text-on-surface text-lg font-extrabold tracking-tight">
-                Mobile Text Editor
-              </Text>
-            </View>
-
-            <Pressable
-              accessibilityLabel="Close editor"
-              accessibilityRole="button"
-              onPress={() => {
-                if (Platform.OS !== 'web') {
-                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
-                }
-                onClose();
-              }}
-              style={{ backgroundColor: colors.glassSurfaceSubtle }}
-              className="w-9 h-9 rounded-full items-center justify-center active:opacity-70">
-              <Ionicons name="close" size={20} color={colors.secondaryText} />
-            </Pressable>
-          </View>
-
-          {/* Stats Bar */}
-          <View
-            style={{ backgroundColor: colors.surface }}
-            className="flex-row items-center justify-between px-6 py-2 border-b border-white/10">
-            <View className="flex-row items-center gap-2">
-              <GlassBadge label={`${charCount} Chars`} variant="primary" />
-              <GlassBadge label={`${wordCount} Words`} variant="secondary" />
-              <GlassBadge label={`${lineCount} Lines`} variant="warning" />
-            </View>
-
-            <View className="flex-row items-center gap-2">
-              {value.length > 0 && (
-                <Pressable
-                  accessibilityLabel="Copy text"
-                  accessibilityRole="button"
-                  onPress={handleCopy}
-                  className="flex-row items-center gap-1 px-2.5 py-1 rounded-full bg-accent/10 active:opacity-70">
-                  <Ionicons name="copy-outline" size={14} color={colors.accent} />
-                  <Text className="text-accent font-semibold text-xs">Copy</Text>
-                </Pressable>
-              )}
-              {value.length > 0 && (
-                <Pressable
-                  accessibilityLabel="Clear text"
-                  accessibilityRole="button"
-                  onPress={handleClear}
-                  className="flex-row items-center gap-1 px-2.5 py-1 rounded-full bg-red-500/10 active:opacity-70">
-                  <Ionicons name="trash-outline" size={14} color="#EF4444" />
-                  <Text className="text-red-400 font-semibold text-xs">Clear</Text>
-                </Pressable>
-              )}
+    <Modal visible animationType="slide" transparent statusBarTranslucent onRequestClose={onClose}>
+      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={styles.root}>
+        <Pressable style={StyleSheet.absoluteFill} onPress={onClose} accessibilityLabel="Close editor" />
+        <View style={[styles.sheet, { paddingBottom: Math.max(insets.bottom, 12) + 12 }]}>
+          <View style={styles.grabber} />
+          <View style={styles.header}>
+            <AppText weight="bold" size={20} tracking={-0.4} accessibilityRole="header">
+              Text
+            </AppText>
+            <View style={styles.headerActions}>
+              <IconButton
+                icon="copy-outline"
+                label="Copy text"
+                size={36}
+                iconSize={18}
+                onPress={handleCopy}
+              />
+              <IconButton
+                icon="trash-outline"
+                label="Clear text"
+                size={36}
+                iconSize={18}
+                onPress={handleClear}
+              />
+              <IconButton icon="close" label="Close" size={36} iconSize={18} onPress={onClose} />
             </View>
           </View>
+          <AppText size={12.5} color={C.muted} style={styles.stats}>
+            {stats}
+          </AppText>
 
-          {/* Text Editor Body */}
-          <ScrollView
-            className="flex-1 p-6"
-            contentContainerStyle={{ flexGrow: 1 }}
-            keyboardShouldPersistTaps="handled">
-            <TextInput
-              multiline
-              autoFocus
-              className="flex-1 text-on-surface font-medium text-base leading-6 text-top p-0 m-0"
-              placeholder="Type or paste plain text payload here..."
-              placeholderTextColor={colors.secondaryText}
-              selectionColor={colors.accent}
-              cursorColor={colors.accent}
-              value={value}
-              onChangeText={onChangeValue}
-              textAlignVertical="top"
-            />
-          </ScrollView>
+          <TextInput
+            multiline
+            autoFocus
+            value={value}
+            onChangeText={onChangeValue}
+            placeholder="Type or paste your text"
+            placeholderTextColor={C.inactive}
+            selectionColor={C.brand}
+            cursorColor={C.brand}
+            textAlignVertical="top"
+            accessibilityLabel="Text for the QR code"
+            style={styles.input}
+          />
 
-          {/* Footer Actions */}
-          <View
-            style={{ borderColor: colors.border, backgroundColor: colors.surface }}
-            className="p-4 border-t flex-row items-center justify-between gap-3 z-10">
-            <GlassButton
-              title="Open in Phone Editor"
+          <View style={styles.footer}>
+            <Button
+              title="Open in editor"
               icon="open-outline"
               variant="secondary"
               onPress={handleOpenPhoneEditor}
+              style={styles.flex}
             />
-            <GlassButton
-              title="Save & Use Text"
-              icon="checkmark-circle-outline"
-              variant="primary"
-              onPress={onClose}
-            />
+            <Button title="Done" icon="checkmark" onPress={onClose} style={styles.flex} />
           </View>
         </View>
       </KeyboardAvoidingView>
     </Modal>
   );
+});
+
+const styles = StyleSheet.create({
+  root: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    backgroundColor: C.scrim,
+  },
+  sheet: {
+    height: '88%',
+    width: '100%',
+    maxWidth: 640,
+    alignSelf: 'center',
+    backgroundColor: C.white,
+    borderTopLeftRadius: 28,
+    borderTopRightRadius: 28,
+    paddingHorizontal: PAD,
+    paddingTop: 8,
+  },
+  grabber: {
+    alignSelf: 'center',
+    width: 36,
+    height: 5,
+    borderRadius: 3,
+    backgroundColor: C.switchOff,
+  },
+  header: {
+    marginTop: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  headerActions: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  stats: {
+    marginTop: 4,
+  },
+  input: {
+    flex: 1,
+    marginTop: 14,
+    padding: 14,
+    borderWidth: 1,
+    borderColor: C.border,
+    borderRadius: 16,
+    fontFamily: FONT.regular,
+    fontSize: 16,
+    lineHeight: 23,
+    color: C.ink,
+  },
+  footer: {
+    marginTop: 12,
+    flexDirection: 'row',
+    gap: 10,
+  },
+  flex: {
+    flex: 1,
+  },
 });

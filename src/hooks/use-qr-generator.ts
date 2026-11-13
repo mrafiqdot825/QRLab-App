@@ -1,6 +1,6 @@
-import { CustomizationOptions, PresetId, QRType } from '@/types/qr';
+import { DEFAULT_QR_COLOR } from '@/constants/design';
+import { CustomizationOptions, QRType } from '@/types/qr';
 import { useCallback, useDeferredValue, useMemo, useRef, useState } from 'react';
-import { Platform } from 'react-native';
 
 export interface UseQRGeneratorProps {
   initialType?: QRType;
@@ -48,9 +48,8 @@ export const useQRGenerator = (props?: UseQRGeneratorProps) => {
     }
   }
 
-  const [presetId, setPresetId] = useState<PresetId>('minimal-white');
-
   const [customOpts, setCustomOpts] = useState<CustomizationOptions>({
+    fgColor: DEFAULT_QR_COLOR,
     bgColor: '#FFFFFF',
     moduleShape: 'rounded',
     eyeStyle: 'rounded',
@@ -129,8 +128,6 @@ export const useQRGenerator = (props?: UseQRGeneratorProps) => {
   return {
     selectedType,
     setSelectedType,
-    presetId,
-    setPresetId,
     customOpts,
     setCustomOpts,
     payloadValue,

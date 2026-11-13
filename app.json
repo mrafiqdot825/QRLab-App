@@ -23,7 +23,10 @@
       "package": "com.rafiqdev.qrlab",
       "versionCode": 3,
       "allowBackup": false,
-      "permissions": ["INTERNET", "VIBRATE"],
+      "permissions": [
+        "INTERNET",
+        "VIBRATE"
+      ],
       "blockedPermissions": [
         "android.permission.RECORD_AUDIO",
         "android.permission.SYSTEM_ALERT_WINDOW",
@@ -51,7 +54,8 @@
         }
       ],
       "expo-sharing",
-      "expo-image"
+      "expo-image",
+      "expo-font"
     ],
     "experiments": {
       "typedRoutes": true,

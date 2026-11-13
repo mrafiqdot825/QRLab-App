@@ -2,6 +2,8 @@ import * as FileSystem from 'expo-file-system/legacy';
 import * as Sharing from 'expo-sharing';
 import { Linking, Platform } from 'react-native';
 import QRCodeGenerator from 'qrcode';
+import { captureQRSnapshot } from '@/components/qr-snapshot-host';
+import { exportPixelSize } from '@/services/preferences';
 import { CustomizationOptions, EyeStyle, LogoPreset, ModuleShape } from '@/types/qr';
 
 export type ExportFormat = 'png' | 'svg' | 'pdf';
@@ -270,7 +272,7 @@ export async function getQRBase64(
         eyeStyle: exportOptions?.eyeStyle || 'rounded',
         logo: exportOptions?.logo || 'none',
       });
-      return await svgToPNGWeb(svg, 1024, bgColor);
+      return await svgToPNGWeb(svg, exportPixelSize(), bgColor);
     } catch {
       // Fallback to qrcode package
       return new Promise((resolve, reject) => {
@@ -278,7 +280,7 @@ export async function getQRBase64(
           payloadValue,
           {
             color: { dark: fgColor, light: bgColor },
-            width: 1024,
+            width: exportPixelSize(),
             margin: 2,
           },
           (err, url) => {
@@ -290,17 +292,42 @@ export async function getQRBase64(
     }
   }
 
-  // 2. On Native, try Svg ref first (which has solid backgroundColor)
+  const px = exportPixelSize();
+
+  // 2. iOS: draw an off-screen copy at export size. react-native-svg's iOS
+  // toDataURL ignores the requested size for the drawing itself.
+  if (Platform.OS === 'ios') {
+    const snapshot = await captureQRSnapshot(
+      payloadValue,
+      {
+        fgColor: exportOptions?.fgColor,
+        bgColor,
+        moduleShape: exportOptions?.moduleShape || 'rounded',
+        eyeStyle: exportOptions?.eyeStyle || 'rounded',
+        logo: exportOptions?.logo || 'none',
+      },
+      px
+    );
+    if (snapshot) return snapshot;
+  }
+
+  // 3. Capture the on-screen preview. Android scales the drawing to the
+  // requested size; iOS falls back to the preview's own size.
   if (qrRef?.current && typeof qrRef.current.toDataURL === 'function') {
     try {
       const data = await new Promise<string>((resolve, reject) => {
-        qrRef.current.toDataURL((b64: string) => {
+        const done = (b64: string) => {
           if (b64) {
             resolve(b64.replace(/^data:image\/png;base64,/, ''));
           } else {
             reject(new Error('Empty PNG returned from native SVG ref'));
           }
-        });
+        };
+        if (Platform.OS === 'android') {
+          qrRef.current.toDataURL(done, { width: px, height: px });
+        } else {
+          qrRef.current.toDataURL(done);
+        }
       });
       return data;
     } catch {
@@ -308,13 +335,13 @@ export async function getQRBase64(
     }
   }
 
-  // 3. Native fallback: pure JS QRCodeGenerator with solid light background
+  // 4. Native fallback: pure JS QRCodeGenerator with solid light background
   return new Promise((resolve, reject) => {
     QRCodeGenerator.toDataURL(
       payloadValue,
       {
         color: { dark: fgColor, light: bgColor },
-        width: 1024,
+        width: px,
         margin: 2,
       },
       (err, url) => {

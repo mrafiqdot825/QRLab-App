@@ -1,49 +1,10 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400..700;1,9..40,400..700&family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&family=Inter:wght@400;500;600;700;800&display=swap');
-
-/*
- * RGB triplets for Morrow design tokens
- * bg-canvas: #FBEDE6
- * bg-surface: #FDF6F2
- * bg-card: #FFFFFF
- * ink: #1A1416
- * ink-muted: #6B6468
- * plum: #4A0F3A
- */
-:root {
-  --color-background: 251 237 230; /* #FBEDE6 (bg-canvas) */
-  --color-bg-secondary: 253 246 242; /* #FDF6F2 (bg-surface) */
-  --color-surface: 255 255 255; /* #FFFFFF (bg-card) */
-  --color-surface-low: 253 246 242;
-  --color-surface-high: 255 255 255;
-  --color-surface-highest: 255 255 255;
-  --color-on-surface: 26 20 22; /* #1A1416 (ink) */
-  --color-on-surface-variant: 107 100 104; /* #6B6468 (ink-muted) */
-  --color-outline: 242 227 220; /* #F2E3DC subtle outline */
-  --color-outline-variant: 247 236 231;
-  --color-primary-container: 253 246 242;
-  --color-secondary-container: 251 237 230;
-  --color-tertiary-container: 253 246 242;
-
-  --glass-border: rgba(74, 15, 58, 0.08);
-  --glass-bg: rgba(255, 255, 255, 0.94);
-  --glass-specular: rgba(255, 255, 255, 0.90);
-  --bg-primary: #FBEDE6;
-  --bg-secondary: #FDF6F2;
-  --text-primary: #1A1416;
-  --text-secondary: #6B6468;
-}
-
-html, body {
-  background-color: #FBEDE6;
-  color: #1A1416;
-  font-family: 'DM Sans', 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+/* Web-only base styles. Native platforms ignore CSS imports. */
+html,
+body {
+  background-color: #ffffff;
+  color: #111114;
+  font-family: 'Onest_400Regular', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   margin: 0;
   padding: 0;
   overflow-x: hidden;
 }
-
-

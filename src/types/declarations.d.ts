@@ -1,7 +1,6 @@
 /// <reference types="expo/types" />
-/// <reference types="nativewind/types" />
 
-// Allow CSS side-effect and default imports for Tailwind / NativeWind
+// Allow CSS side-effect and default imports (web)
 declare module '*.css' {
   const content: any;
   export default content;
